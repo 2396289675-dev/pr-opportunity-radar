@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>传播机会雷达</title>
+<style>
+  :root{
+    --bg:#faf9f7; --card:#ffffff; --line:#e6e3dd; --line2:#d3d1c7;
+    --tx:#2c2c2a; --tx2:#5f5e5a; --tx3:#888780;
+    --p0-bg:#fcebeb; --p0-fg:#a32d2d; --p0-bd:#f09595;
+    --p1-bg:#faeeda; --p1-fg:#854f0b; --p1-bd:#ef9f27;
+    --p2-bg:#f1efe8; --p2-fg:#5f5e5a; --p2-bd:#b4b2a9;
+    --risk-bg:#fcf3ed; --risk-fg:#993c1d;
+    --ok-bg:#eaf3de; --ok-fg:#3b6d11;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:36px 24px 64px}
+  h1{font-size:19px;font-weight:600;margin:0 0 4px;letter-spacing:.3px}
+  .sub{color:var(--tx3);font-size:13px;margin-bottom:22px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;min-width:96px}
+  .stat .n{font-size:20px;font-weight:600;line-height:1.2}
+  .stat .l{font-size:12px;color:var(--tx3)}
+  .stat.hi .n{color:var(--p1-fg)}
+  .focus{margin:14px 0 26px;padding:11px 14px;background:#e6f1fb;border:1px solid #b5d4f4;
+    border-radius:10px;font-size:13px;color:#0c447c}
+  .sec-h{display:flex;align-items:center;gap:9px;margin:30px 0 13px}
+  .sec-h .t{font-size:15px;font-weight:600}
+  .sec-h .c{font-size:12px;color:var(--tx3)}
+  .sec-h .bar{width:3px;height:15px;border-radius:2px;background:var(--line2)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .card.p0{border-left:3px solid var(--p0-bd)}
+  .card.p1{border-left:3px solid var(--p1-bd)}
+  .card.p2{border-left:3px solid var(--p2-bd)}
+  .card.person{border-left:3px solid #afa9ec}
+  .badge.per{background:#eeedfe;color:#534ab7;border:1px solid #afa9ec}
+  .top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+  .badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px;
+    white-space:nowrap;flex:none;margin-top:2px}
+  .badge.P0{background:var(--p0-bg);color:var(--p0-fg);border:1px solid var(--p0-bd)}
+  .badge.P1{background:var(--p1-bg);color:var(--p1-fg);border:1px solid var(--p1-bd)}
+  .badge.P2{background:var(--p2-bg);color:var(--p2-fg);border:1px solid var(--p2-bd)}
+  .ttl{font-size:15px;font-weight:600;line-height:1.5}
+  .ttl a{color:var(--tx);text-decoration:none;border-bottom:1px solid var(--line2)}
+  .ttl a:hover{color:#185fa5;border-bottom-color:#185fa5}
+  .score{margin-left:auto;font-size:12px;color:var(--tx3);flex:none;padding-top:3px}
+  .meta{font-size:12px;color:var(--tx3);margin-bottom:12px;display:flex;
+    gap:8px;flex-wrap:wrap;align-items:center}
+  .tag{background:#f1efe8;border-radius:5px;padding:1px 7px;color:var(--tx2)}
+  .tag.gov{background:var(--ok-bg);color:var(--ok-fg)}
+  .tag.hot{background:#faece7;color:#993c1d}
+  .row{display:flex;gap:9px;margin-bottom:7px;font-size:13.5px;line-height:1.6}
+  .row .k{flex:none;width:76px;color:var(--tx3);font-size:12.5px;padding-top:1px}
+  .row .v{flex:1;color:var(--tx)}
+  .row.risk .v{color:var(--risk-fg)}
+  .row.risk .k{color:var(--risk-fg)}
+  .row.act .v{color:#185fa5}
+  .src{display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+    margin:0 0 10px;font-size:12.5px}
+  .src .m{background:var(--ok-bg);color:var(--ok-fg);border-radius:5px;
+    padding:1px 8px;font-weight:600}
+  .src a{color:#185fa5;text-decoration:none;white-space:nowrap}
+  .src a:hover{text-decoration:underline}
+  .src .more{color:var(--tx3)}
+  .row.ev .v{color:var(--tx2)}
+  .row.biz .k{color:#185fa5}
+  .row.biz .v{color:#185fa5}
+  .empty{background:var(--card);border:1px dashed var(--line2);border-radius:12px;
+    padding:16px 18px;color:var(--tx2);font-size:13.5px;margin-bottom:12px}
+  .foot{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--tx3);line-height:1.8}
+  .note{font-size:12.5px;color:var(--tx3);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+window.RADAR_DATA = __DATA__;
+(function(){
+  var d = window.RADAR_DATA;
+  var app = document.getElementById('app');
+
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function heat(h){
+    if(!h) return '';
+    return h>=10000 ? (h/10000).toFixed(0)+'万' : String(h);
+  }
+  function row(k,v,cls){
+    if(!v) return '';
+    return '<div class="row '+(cls||'')+'"><div class="k">'+k+'</div>'+
+           '<div class="v">'+esc(v)+'</div></div>';
+  }
+  // 报道出处：媒体名 + 原文链接 + 其他报道该事件的媒体
+  function srcLine(c){
+    var media = c.media || (c.sources && c.sources[0]) || '';
+    var link  = c.url || (c.urls && c.urls[0]) || '';
+    var s = '<div class="src">';
+    if(media) s += '<span class="m">'+esc(media)+'</span>';
+    if(link)  s += '<a href="'+esc(link)+'" target="_blank" rel="noopener">查看原文 &#8599;</a>';
+    var others = (c.reports||[]).slice(1,4)
+      .map(function(r){return r.media;}).filter(Boolean);
+    if(others.length) s += '<span class="more">相关报道：'+esc(others.join('、'))+'</span>';
+    return s + '</div>';
+  }
+
+  var s = d.stats || {};
+  var h = '<h1>传播机会雷达</h1>';
+  h += '<div class="sub">'+esc(d.date)+' · 生成于 '+esc((d.built_at||'').slice(11,16))+'</div>';
+
+  h += '<div class="stats">'+
+       '<div class="stat"><div class="n">'+esc(s.raw||0)+'</div><div class="l">原始抓取</div></div>'+
+       '<div class="stat"><div class="n">'+esc(s.blocked||0)+'</div><div class="l">硬过滤丢弃</div></div>'+
+       '<div class="stat"><div class="n">'+esc(s.candidates||0)+'</div><div class="l">合并候选</div></div>'+
+       '<div class="stat"><div class="n">'+esc(s.judged||0)+'</div><div class="l">判读入库</div></div>'+
+       '<div class="stat hi"><div class="n">'+esc(s.p0||0)+'</div><div class="l">P0 立刻跟</div></div>'+
+       '<div class="stat hi"><div class="n">'+esc(s.p1||0)+'</div><div class="l">P1 今日看</div></div>'+
+       '<div class="stat"><div class="n">'+esc(s.people||0)+'</div><div class="l">出圈人物</div></div>'+
+       '</div>';
+
+  if(d.focus && d.focus.length){
+    h += '<div class="focus">判读范围：'+esc(d.focus.join(' · '))+'</div>';
+  }
+  if(d.scope_note){
+    h += '<div class="note" style="margin:-16px 0 24px">'+esc(d.scope_note)+'</div>';
+  }
+
+  if(d.people && d.people.length){
+    h += '<div class="sec-h"><div class="bar" style="background:#7f77dd"></div>'+
+         '<div class="t">今日出圈人物</div><div class="c">'+d.people.length+' 人</div></div>';
+    d.people.forEach(function(p){
+      h += '<div class="card person">';
+      h += '<div class="top"><span class="badge per">'+esc(p.type)+'</span>'+
+           '<div class="ttl">'+esc(p.name)+'</div>'+
+           '<div class="score">'+esc(heat(p.heat))+'</div></div>';
+      h += '<div class="meta">'+
+           '<span>'+esc(p.title||'')+'</span>'+
+           (p.heat?'<span>热度 '+heat(p.heat)+'</span>':'')+'</div>';
+      h += srcLine(p);
+      if(p.summary) h += row('人物', p.summary, 'ev');
+      h += row('出圈原因', p.why);
+      h += row('可用在哪', p.usable);
+      h += row('风险', p.risk, 'risk');
+      h += '</div>';
+    });
+  }
+
+  var groups = [
+    ['P0','P0 · 立刻跟进','#f09595'],
+    ['P1','P1 · 今日内看','#ef9f27'],
+    ['P2','P2 · 观察储备','#b4b2a9']
+  ];
+
+  groups.forEach(function(g){
+    var items = (d.cases||[]).filter(function(c){return c.priority===g[0];});
+    h += '<div class="sec-h"><div class="bar" style="background:'+g[2]+'"></div>'+
+         '<div class="t">'+g[1]+'</div><div class="c">'+items.length+' 条</div></div>';
+    if(!items.length){
+      if(g[0]==='P0' && d.p0_note){
+        h += '<div class="empty">'+esc(d.p0_note)+'</div>';
+      } else {
+        h += '<div class="empty">今日无此项。</div>';
+      }
+      return;
+    }
+    items.forEach(function(c){
+      h += '<div class="card '+g[0].toLowerCase()+'">';
+      h += '<div class="top"><span class="badge '+g[0]+'">'+g[0]+'</span>'+
+           '<div class="ttl">';
+      var u = (c.urls&&c.urls[0]) ? c.urls[0] : '';
+      h += u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>'
+             : esc(c.title);
+      h += '</div><div class="score">'+(c.score?c.score+' 分':'')+'</div></div>';
+
+      h += '<div class="meta">';
+      if(c.official) h += '<span class="tag gov">'+esc(c.official_tier||'官媒')+'背书</span>';
+      if(c.on_hotlist) h += '<span class="tag hot">热榜在榜</span>';
+      if(c.topic) h += '<span class="tag">'+esc(c.topic)+'</span>';
+      var hv = heat(c.heat);
+      if(hv) h += '<span>热度 '+hv+'</span>';
+      h += '</div>';
+
+      h += srcLine(c);
+      h += row('事件', c.summary || c.summary_raw, 'ev');
+      h += row('腾讯业务', c.biz, 'biz');
+      h += row('机会在哪', c.opportunity);
+      h += row('腾讯接入', c.tencent_angle);
+      h += row('风险', c.risk, 'risk');
+      h += row('建议动作', c.action, 'act');
+      h += row('窗口期', c.window);
+      h += '</div>';
+    });
+  });
+
+  h += '<div class="foot">'+
+       '判读口径：腾讯做发起方与工具提供方，不抢叙事、不写成英雄。<br>'+
+       '社会贡献必须为正向建设，涉及给官方纠错、挑错的内容一律不纳入。<br>'+
+       '数据来源：微博 / 百度 / 头条热榜，新华网科技、人民网科技·社会、光明网科技。微信公众号无法自动抓取，需手动补充。'+
+       '</div>';
+
+  app.innerHTML = h;
+})();
+</script>
+</body>
+</html>

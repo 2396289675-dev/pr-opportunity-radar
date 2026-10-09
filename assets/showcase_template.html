@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>传播机会雷达 · 每日判读</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#ffffff; --line:#e8e5df; --line2:#d5d2c9;
+    --tx:#2b2b28; --tx2:#5c5b56; --tx3:#8b8a83;
+    --p0-bg:#fcebeb; --p0-fg:#a32d2d; --p0-bd:#f09595;
+    --p1-bg:#faeeda; --p1-fg:#854f0b; --p1-bd:#ef9f27;
+    --p2-bg:#f1efe8; --p2-fg:#5f5e5a; --p2-bd:#b4b2a9;
+    --risk-bg:#fcf3ed; --risk-fg:#993c1d;
+    --ok-bg:#eaf3de; --ok-fg:#3b6d11;
+    --brand:#185fa5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",sans-serif;
+    font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 56px}
+
+  /* ---------- 头部 ---------- */
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:24px 26px;margin-bottom:18px}
+  .hero h1{font-size:21px;font-weight:600;margin:0 0 6px;letter-spacing:.3px}
+  .hero .desc{color:var(--tx2);font-size:13.5px;margin-bottom:16px;line-height:1.7}
+  .hero .date{color:var(--tx3);font-size:12.5px}
+
+  /* ---------- 漏斗 ---------- */
+  .funnel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 26px;margin-bottom:26px}
+  .funnel .fh{font-size:13px;color:var(--tx3);margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .funnel .fh b{font-size:14px;color:var(--tx);font-weight:600}
+  .frow{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+  .frow .lab{flex:none;width:96px;font-size:12.5px;color:var(--tx2);text-align:right}
+  .frow .track{flex:1;height:26px;background:#f2f0ea;border-radius:6px;overflow:hidden}
+  .frow .fill{height:100%;border-radius:6px;display:flex;align-items:center;
+    padding-left:10px;color:#fff;font-size:12.5px;font-weight:600;
+    min-width:52px;white-space:nowrap;
+    transition:width .8s cubic-bezier(.22,1,.36,1)}
+  .frow .num{flex:none;width:52px;font-size:12.5px;color:var(--tx3);text-align:right}
+  .fnote{margin-top:12px;font-size:12.5px;color:var(--tx3);line-height:1.7;
+    padding-top:12px;border-top:1px dashed var(--line2)}
+
+  /* ---------- 区块标题 ---------- */
+  .sec-h{display:flex;align-items:center;gap:9px;margin:28px 0 13px;flex-wrap:wrap}
+  .sec-h .t{font-size:15.5px;font-weight:600}
+  .sec-h .c{font-size:12px;color:var(--tx3)}
+  .sec-h .bar{width:3px;height:16px;border-radius:2px;background:var(--line2);
+    display:inline-block}
+
+  /* ---------- 人物卡 ---------- */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    border-left:3px solid #afa9ec;padding:16px 18px}
+  .pcard .ph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .avatar{flex:none;width:34px;height:34px;border-radius:9px;background:#eeedfe;
+    color:#534ab7;font-size:15px;font-weight:600;display:flex;
+    align-items:center;justify-content:center}
+  .pcard .nm{font-size:15px;font-weight:600;line-height:1.35}
+  .pcard .tp{font-size:11.5px;color:#534ab7;background:#eeedfe;border:1px solid #afa9ec;
+    border-radius:5px;padding:1px 7px;display:inline-block;margin-top:3px}
+  .pcard .ht{margin-left:auto;font-size:12px;color:var(--tx3);flex:none;text-align:right}
+  .pcard .ht b{display:block;font-size:14px;color:#993c1d;font-weight:600}
+  .pcard .ps{font-size:13px;color:var(--tx2);line-height:1.65;margin-bottom:9px}
+
+  /* ---------- 机会卡 ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .card.p0{border-left:3px solid var(--p0-bd)}
+  .card.p1{border-left:3px solid var(--p1-bd)}
+  .card.p2{border-left:3px solid var(--p2-bd)}
+  .top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+  .badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px;
+    white-space:nowrap;flex:none;margin-top:2px}
+  .badge.P0{background:var(--p0-bg);color:var(--p0-fg);border:1px solid var(--p0-bd)}
+  .badge.P1{background:var(--p1-bg);color:var(--p1-fg);border:1px solid var(--p1-bd)}
+  .badge.P2{background:var(--p2-bg);color:var(--p2-fg);border:1px solid var(--p2-bd)}
+  .ttl{font-size:15px;font-weight:600;line-height:1.5}
+  .ttl a{color:var(--tx);text-decoration:none;border-bottom:1px solid var(--line2)}
+  .ttl a:hover{color:var(--brand);border-bottom-color:var(--brand)}
+  .score{margin-left:auto;font-size:12px;color:var(--tx3);flex:none;padding-top:3px}
+  .meta{font-size:12px;color:var(--tx3);margin-bottom:11px;display:flex;
+    gap:7px;flex-wrap:wrap;align-items:center}
+  .tag{background:#f1efe8;border-radius:5px;padding:1px 7px;color:var(--tx2)}
+  .tag.gov{background:var(--ok-bg);color:var(--ok-fg)}
+  .tag.hot{background:#faece7;color:#993c1d}
+  .row{display:flex;gap:9px;margin-bottom:7px;font-size:13.5px;line-height:1.65}
+  .row .k{flex:none;width:74px;color:var(--tx3);font-size:12.5px;padding-top:1px}
+  .row .v{flex:1;color:var(--tx)}
+  .row.ev .v{color:var(--tx2)}
+  .row.risk .v{color:var(--risk-fg)}
+  .row.risk .k{color:var(--risk-fg)}
+  .row.biz .k,.row.biz .v{color:var(--brand)}
+  .row.act .v{color:var(--brand)}
+  .src{display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+    margin:0 0 10px;font-size:12.5px}
+  .src .m{background:var(--ok-bg);color:var(--ok-fg);border-radius:5px;
+    padding:1px 8px;font-weight:600}
+  .src a{color:var(--brand);text-decoration:none;white-space:nowrap}
+  .src a:hover{text-decoration:underline}
+  .src .more{color:var(--tx3)}
+  .empty{background:var(--card);border:1px dashed var(--line2);border-radius:12px;
+    padding:16px 18px;color:var(--tx2);font-size:13.5px;margin-bottom:12px}
+
+  /* ---------- P2 紧凑列表 ---------- */
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:6px 18px;margin-bottom:12px}
+  .mrow{display:flex;gap:10px;align-items:baseline;padding:9px 0;
+    border-bottom:1px solid #f2f0ea;font-size:13.5px}
+  .mrow:last-child{border-bottom:0}
+  .mrow .mt{flex:1;line-height:1.55}
+  .mrow .mt a{color:var(--tx);text-decoration:none}
+  .mrow .mt a:hover{color:var(--brand)}
+  .mrow .mm{flex:none;font-size:12px;color:var(--tx3)}
+  .mrow .mb{flex:none;font-size:11.5px;color:var(--brand);max-width:180px;
+    text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--tx3);line-height:1.85}
+
+  /* ---------- 窄屏适配（嵌入 iframe / 手机） ---------- */
+  @media (max-width:640px){
+    .wrap{padding:18px 14px 40px}
+    .hero{padding:18px 18px}
+    .hero h1{font-size:18px}
+    .funnel{padding:16px 16px}
+    .frow .lab{width:70px;font-size:12px}
+    .frow .num{width:44px}
+    .pgrid{grid-template-columns:1fr}
+    .row{flex-direction:column;gap:2px}
+    .row .k{width:auto}
+    .mrow{flex-direction:column;gap:3px}
+    .mrow .mb{max-width:none;text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+window.RADAR_DATA = __DATA__;
+(function(){
+  var d = window.RADAR_DATA, app = document.getElementById('app'), h = '';
+
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function heat(v){
+    if(!v) return '';
+    return v>=10000 ? (v/10000).toFixed(0)+'万' : String(v);
+  }
+  function row(k,v,cls){
+    if(!v) return '';
+    return '<div class="row '+(cls||'')+'"><div class="k">'+k+'</div>'+
+           '<div class="v">'+esc(v)+'</div></div>';
+  }
+  function srcLine(c){
+    var media = c.media || (c.sources && c.sources[0]) || '';
+    var link  = c.url || (c.urls && c.urls[0]) || '';
+    var s = '<div class="src">';
+    if(media) s += '<span class="m">'+esc(media)+'</span>';
+    if(link)  s += '<a href="'+esc(link)+'" target="_blank" rel="noopener">查看原文 &#8599;</a>';
+    var others = (c.reports||[]).slice(1,4).map(function(r){return r.media;}).filter(Boolean);
+    if(others.length) s += '<span class="more">相关报道：'+esc(others.join('、'))+'</span>';
+    return s + '</div>';
+  }
+
+  var s = d.stats || {};
+
+  /* ---------- 头部 ---------- */
+  h += '<div class="hero">'+
+       '<h1>传播机会雷达</h1>'+
+       '<div class="desc">每天从全网热榜与官媒科技内容中，筛出腾讯能正向接入、'+
+       '值得对外发声的传播机会，并给出跟进优先级。'+
+       '系统每天自动完成采集、溯源、判读与推送。</div>'+
+       '<div class="date">'+esc(d.date)+' · 生成于 '+esc((d.built_at||'').slice(11,16))+'</div>'+
+       '</div>';
+
+  /* ---------- 漏斗：系统价值最直观的一屏 ---------- */
+  var stages = [
+    ['原始抓取', s.raw||0,        '#b4b2a9'],
+    ['合并候选', s.candidates||0, '#7f77dd'],
+    ['判读入库', s.judged||0,     '#ef9f27'],
+    ['P1 以上',  (s.p0||0)+(s.p1||0), '#e07b39']
+  ];
+  var maxv = Math.max.apply(null, stages.map(function(x){return x[1];})) || 1;
+  h += '<div class="funnel">'+
+       '<div class="fh"><b>今日漏斗</b><span>从 '+esc(s.raw||0)+' 条原始信息到 '+esc(s.judged||0)+' 条可用机会</span></div>';
+  stages.forEach(function(st){
+    var pct = Math.max(8, Math.round(st[1]/maxv*100));
+    h += '<div class="frow"><div class="lab">'+st[0]+'</div>'+
+         '<div class="track"><div class="fill" style="width:'+pct+'%;background:'+st[2]+'">'+
+         esc(st[1])+'</div></div>'+
+         '<div class="num">'+esc(st[1])+'</div></div>';
+  });
+  h += '<div class="fnote">中间 '+esc(s.blocked||0)+' 条被硬过滤丢弃（娱乐八卦、社会负面、时政敏感、竞品主体）。'+
+       '剩下的经判读后只保留真正可跟的——<b>宁可空着，也不灌水</b>。</div></div>';
+
+  /* ---------- 今日出圈人物 ---------- */
+  if(d.people && d.people.length){
+    h += '<div class="sec-h"><span class="bar" style="background:#7f77dd"></span>'+
+         '<span class="t">今日出圈人物</span><span class="c">'+d.people.length+' 人</span></div>';
+    h += '<div class="pgrid">';
+    d.people.forEach(function(p){
+      var initial = esc((p.name||'?').replace(/["“”「」\s]/g,'').slice(0,1));
+      h += '<div class="pcard">'+
+           '<div class="ph"><div class="avatar">'+initial+'</div>'+
+           '<div><div class="nm">'+esc(p.name)+'</div>'+
+           '<div class="tp">'+esc(p.type)+'</div></div>'+
+           '<div class="ht">'+(p.heat?'<b>'+heat(p.heat)+'</b>热度':'')+'</div></div>'+
+           '<div class="ps">'+esc(p.summary||'')+'</div>';
+      h += srcLine(p);
+      h += row('可用在哪', p.usable);
+      h += row('风险', p.risk, 'risk');
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  /* ---------- P0 / P1 完整卡片 ---------- */
+  [['P0','P0 · 立刻跟进','#f09595'],['P1','P1 · 今日内看','#ef9f27']].forEach(function(g){
+    var items = (d.cases||[]).filter(function(c){return c.priority===g[0];});
+    h += '<div class="sec-h"><span class="bar" style="background:'+g[2]+'"></span>'+
+         '<span class="t">'+g[1]+'</span><span class="c">'+items.length+' 条</span></div>';
+    if(!items.length){
+      h += '<div class="empty">'+
+           esc(g[0]==='P0' ? (d.p0_note || '今日无 P0。')
+                           : '今日无 P1 机会。')+'</div>';
+      return;
+    }
+    items.forEach(function(c){
+      h += '<div class="card '+g[0].toLowerCase()+'">';
+      h += '<div class="top"><span class="badge '+g[0]+'">'+g[0]+'</span>'+
+           '<div class="ttl">';
+      var u = (c.urls&&c.urls[0]) ? c.urls[0] : '';
+      h += u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>'
+             : esc(c.title);
+      h += '</div><div class="score">'+(c.score?c.score+' 分':'')+'</div></div>';
+      h += '<div class="meta">';
+      if(c.official) h += '<span class="tag gov">'+esc(c.official_tier||'官媒')+'背书</span>';
+      if(c.on_hotlist) h += '<span class="tag hot">热榜在榜</span>';
+      if(c.topic) h += '<span class="tag">'+esc(c.topic)+'</span>';
+      var hv = heat(c.heat);
+      if(hv) h += '<span>热度 '+esc(hv)+'</span>';
+      h += '</div>';
+      h += srcLine(c);
+      h += row('事件', c.summary || c.summary_raw, 'ev');
+      h += row('腾讯业务', c.biz, 'biz');
+      h += row('机会在哪', c.opportunity);
+      h += row('腾讯接入', c.tencent_angle);
+      h += row('风险', c.risk, 'risk');
+      h += row('建议动作', c.action, 'act');
+      h += row('窗口期', c.window);
+      h += '</div>';
+    });
+  });
+
+  /* ---------- P2 观察池：紧凑列表 ---------- */
+  var p2 = (d.cases||[]).filter(function(c){return c.priority==='P2';});
+  if(p2.length){
+    h += '<div class="sec-h"><span class="bar" style="background:#b4b2a9"></span>'+
+         '<span class="t">P2 · 观察储备</span><span class="c">'+p2.length+' 条</span></div>';
+    h += '<div class="mini">';
+    p2.forEach(function(c){
+      var u = (c.urls&&c.urls[0]) ? c.urls[0] : '';
+      var t = u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>'
+                : esc(c.title);
+      h += '<div class="mrow"><div class="mt">'+t+'</div>'+
+           '<div class="mb">'+esc((c.biz||'').split('·')[0].trim())+'</div>'+
+           '<div class="mm">'+esc(c.media||(c.sources&&c.sources[0])||'')+'</div></div>';
+    });
+    h += '</div>';
+  }
+
+  h += '<div class="foot">'+
+       '判读口径：腾讯做发起方与工具提供方，不抢叙事、不把自己写成英雄。<br>'+
+       '社会贡献必须为正向建设，涉及给官方纠错、挑错的内容一律不纳入。<br>'+
+       '数据来源：微博 / 百度 / 头条热榜，新华网科技、人民网科技·社会、光明网科技。'+
+       '微信公众号无法自动抓取，需手动补充。'+
+       '</div>';
+
+  app.innerHTML = h;
+})();
+</script>
+</body>
+</html>

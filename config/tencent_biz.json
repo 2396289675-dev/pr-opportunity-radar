@@ -1,0 +1,602 @@
+{
+  "version": 1,
+  "updated": "2026-10-08",
+  "_how": "判读时 biz 字段只能从 enabled=true 的业务里挑；接不上就写「接不上」，不要硬凑。勾完请用 biz_pool.html 下载结果，我会写回这里。",
+  "groups": [
+    {
+      "id": "c",
+      "name": "C 端产品与平台",
+      "hint": "普通人日常在用的产品，凡人微光与适老化题材最常落在这里"
+    },
+    {
+      "id": "ai",
+      "name": "AI 与技术能力",
+      "hint": "AI 普惠题材的对位区，强调已有能力而非新造概念"
+    },
+    {
+      "id": "content",
+      "name": "数字内容与文娱",
+      "hint": "内容分发与传播载体"
+    },
+    {
+      "id": "industry",
+      "name": "行业解决方案",
+      "hint": "医疗、教育、出行等垂类，多为伴随式角色"
+    },
+    {
+      "id": "ssv",
+      "name": "公益与社会价值",
+      "hint": "科技向善的主阵地，正向建设叙事最顺"
+    },
+    {
+      "id": "custom",
+      "name": "自定义",
+      "hint": "上面没有的，自己加"
+    }
+  ],
+  "items": [
+    {
+      "id": "wechat",
+      "group": "c",
+      "name": "微信",
+      "enabled": true,
+      "recommended": true,
+      "desc": "国民级社交与生活方式平台，长辈模式、关怀版、字号与语音辅助等适老改造都在这一层",
+      "fit": "适老化、无障碍、普通人日常、社区互助",
+      "aliases": [
+        "微信",
+        "长辈模式",
+        "关怀版",
+        "微信状态"
+      ],
+      "note": ""
+    },
+    {
+      "id": "wechat_pay",
+      "group": "c",
+      "name": "微信支付",
+      "enabled": true,
+      "recommended": true,
+      "desc": "支付与金融科技，覆盖小微商家收款、经营与风控",
+      "fit": "小微商家经营、智能体支付安全、线下小店",
+      "aliases": [
+        "微信支付"
+      ],
+      "note": "涉支付合规，对外口径需先过法务"
+    },
+    {
+      "id": "mini_program",
+      "group": "c",
+      "name": "微信小程序",
+      "enabled": true,
+      "recommended": true,
+      "desc": "轻量应用生态，商家经营、政务服务与公益都跑在上面",
+      "fit": "小微商家数字化、政务与公共服务、文旅导览",
+      "aliases": [
+        "小程序",
+        "微信小程序"
+      ],
+      "note": ""
+    },
+    {
+      "id": "channels",
+      "group": "c",
+      "name": "微信视频号",
+      "enabled": true,
+      "recommended": true,
+      "desc": "短视频与直播，普通人的记录与正向内容扩散主要靠它",
+      "fit": "凡人微光、素人走红、普通人记录、正向内容扩散",
+      "aliases": [
+        "视频号",
+        "微信视频号"
+      ],
+      "note": ""
+    },
+    {
+      "id": "qq",
+      "group": "c",
+      "name": "QQ",
+      "enabled": true,
+      "recommended": false,
+      "desc": "即时通讯，用户偏年轻",
+      "fit": "年轻人相关题材",
+      "aliases": [
+        "QQ"
+      ],
+      "note": "年轻人议题可用，但对外传播声量弱于微信"
+    },
+    {
+      "id": "wecom",
+      "group": "c",
+      "name": "企业微信",
+      "enabled": true,
+      "recommended": false,
+      "desc": "企业协作与组织数字化",
+      "fit": "基层组织、社区治理、中小企业",
+      "aliases": [
+        "企业微信",
+        "企微"
+      ],
+      "note": "偏 B 端，C 端传播感弱"
+    },
+    {
+      "id": "tencent_meeting",
+      "group": "c",
+      "name": "腾讯会议",
+      "enabled": true,
+      "recommended": false,
+      "desc": "远程协作，有实时字幕等无障碍能力",
+      "fit": "远程办公、听障辅助、教育",
+      "aliases": [
+        "腾讯会议"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_docs",
+      "group": "c",
+      "name": "腾讯文档",
+      "enabled": true,
+      "recommended": false,
+      "desc": "在线协作文档",
+      "fit": "协作、教育、公益协作",
+      "aliases": [
+        "腾讯文档"
+      ],
+      "note": ""
+    },
+    {
+      "id": "qq_browser",
+      "group": "c",
+      "name": "QQ浏览器",
+      "enabled": false,
+      "recommended": false,
+      "desc": "移动端浏览器与信息入口",
+      "fit": "信息获取、无障碍浏览",
+      "aliases": [
+        "QQ浏览器"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_map",
+      "group": "c",
+      "name": "腾讯地图",
+      "enabled": true,
+      "recommended": true,
+      "desc": "出行与位置服务，含无障碍导航、景区导览",
+      "fit": "文旅、出行、无障碍导航、基层应急",
+      "aliases": [
+        "腾讯地图"
+      ],
+      "note": "文旅与应急题材多为伴随式角色，做不出深度"
+    },
+    {
+      "id": "yuanbao",
+      "group": "ai",
+      "name": "元宝（腾讯混元 App）",
+      "enabled": true,
+      "recommended": true,
+      "desc": "面向 C 端的 AI 助手应用",
+      "fit": "AI 普惠、普通人用 AI、AI 素养",
+      "aliases": [
+        "元宝",
+        "元宝App",
+        "腾讯元宝"
+      ],
+      "note": ""
+    },
+    {
+      "id": "hunyuan",
+      "group": "ai",
+      "name": "腾讯混元大模型",
+      "enabled": true,
+      "recommended": true,
+      "desc": "底层大模型能力，是元宝等产品的基础",
+      "fit": "AI 能力背书、技术向沟通",
+      "aliases": [
+        "混元",
+        "腾讯混元",
+        "混元大模型"
+      ],
+      "note": "偏技术层，C 端故事里通常只做背景"
+    },
+    {
+      "id": "tencent_cloud",
+      "group": "ai",
+      "name": "腾讯云",
+      "enabled": true,
+      "recommended": true,
+      "desc": "云与行业数字化底座",
+      "fit": "城市数字化、政务、产业AI、文旅基础设施",
+      "aliases": [
+        "腾讯云"
+      ],
+      "note": "主体常是政府或企业，腾讯角色偏背景"
+    },
+    {
+      "id": "youtu",
+      "group": "ai",
+      "name": "腾讯优图实验室",
+      "enabled": true,
+      "recommended": true,
+      "desc": "视觉 AI 与 OCR，有手语识别、视觉无障碍等能力",
+      "fit": "无障碍、听障视障、图像识别公益应用",
+      "aliases": [
+        "优图",
+        "优图实验室",
+        "腾讯优图"
+      ],
+      "note": ""
+    },
+    {
+      "id": "ai_lab",
+      "group": "ai",
+      "name": "腾讯 AI Lab",
+      "enabled": true,
+      "recommended": false,
+      "desc": "AI 研究团队，含 AI 医疗、AI 游戏等方向",
+      "fit": "科研向、基础研究",
+      "aliases": [
+        "AI Lab",
+        "腾讯AI Lab",
+        "腾讯人工智能实验室"
+      ],
+      "note": ""
+    },
+    {
+      "id": "workbuddy",
+      "group": "ai",
+      "name": "WorkBuddy（AI 工作台）",
+      "enabled": true,
+      "recommended": true,
+      "desc": "能跨源检索、写文档做表格、搭应用的 AI 工作台，价值是「让一个小团队拥有以前一个技术团队的产能」，不是修图美化工具",
+      "fit": "档案层（非结构化素材→可检索数据库）、核查层（跨源比对）、产品层（报道沉淀成长期可访问的应用）——即「这件事以前做不到、现在做得到」",
+      "aliases": [
+        "WorkBuddy",
+        "WorkBuddy AI",
+        "AI工作台"
+      ],
+      "note": "定位红线：腾讯是工具提供方与赋能者，不抢叙事、不把自己写成英雄。只有当事件本身真的需要「整理海量资料／做长期档案／把内容变成产品」时才成立，硬蹭会变成自宣；讲科技向善时落点是抢救性记录与让做不到的报道变得能做到，不是把老照片修好看"
+    },
+    {
+      "id": "tencent_news",
+      "group": "content",
+      "name": "腾讯新闻",
+      "enabled": false,
+      "recommended": true,
+      "desc": "资讯与内容分发平台",
+      "fit": "凡人微光内容载体、群像故事、科普分发",
+      "aliases": [
+        "腾讯新闻"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_video",
+      "group": "content",
+      "name": "腾讯视频",
+      "enabled": false,
+      "recommended": false,
+      "desc": "长视频平台与纪录片",
+      "fit": "纪录片、长内容",
+      "aliases": [
+        "腾讯视频"
+      ],
+      "note": "长内容周期慢，热点类题材对不上"
+    },
+    {
+      "id": "tme",
+      "group": "content",
+      "name": "腾讯音乐娱乐",
+      "enabled": false,
+      "recommended": false,
+      "desc": "音乐平台",
+      "fit": "音乐相关公益、听障题材",
+      "aliases": [
+        "腾讯音乐",
+        "TME",
+        "QQ音乐",
+        "全民K歌"
+      ],
+      "note": ""
+    },
+    {
+      "id": "reading",
+      "group": "content",
+      "name": "阅文 / 微信读书",
+      "enabled": true,
+      "recommended": false,
+      "desc": "网络文学与阅读",
+      "fit": "阅读推广、乡村阅读、视障阅读",
+      "aliases": [
+        "阅文",
+        "微信读书",
+        "起点"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_game",
+      "group": "content",
+      "name": "腾讯游戏",
+      "enabled": false,
+      "recommended": false,
+      "desc": "游戏业务",
+      "fit": "游戏化公益、功能游戏",
+      "aliases": [
+        "腾讯游戏",
+        "游戏"
+      ],
+      "note": "默认关闭：涉未成年人议题高度敏感，正向题材中极少能自然接入，需要时手动开"
+    },
+    {
+      "id": "tencent_ads",
+      "group": "content",
+      "name": "腾讯广告",
+      "enabled": false,
+      "recommended": false,
+      "desc": "商业化广告业务",
+      "fit": "商家营销",
+      "aliases": [
+        "腾讯广告",
+        "广告"
+      ],
+      "note": "默认关闭：商业化属性强，对外正向传播中不宜当抓手"
+    },
+    {
+      "id": "tencent_health",
+      "group": "industry",
+      "name": "腾讯健康",
+      "enabled": true,
+      "recommended": true,
+      "desc": "医疗健康服务与数字化",
+      "fit": "基层医疗、线上问诊、医疗资源下沉",
+      "aliases": [
+        "腾讯健康"
+      ],
+      "note": "医疗表述受严格监管，不能有任何疗效暗示"
+    },
+    {
+      "id": "tencent_med",
+      "group": "industry",
+      "name": "腾讯医典",
+      "enabled": true,
+      "recommended": true,
+      "desc": "医学科普内容平台",
+      "fit": "健康科普、罕见病、老年健康",
+      "aliases": [
+        "腾讯医典",
+        "医典"
+      ],
+      "note": "同上，医疗内容需谨慎"
+    },
+    {
+      "id": "tencent_edu",
+      "group": "industry",
+      "name": "腾讯教育 / 腾讯学堂",
+      "enabled": true,
+      "recommended": true,
+      "desc": "教育数字化与学习平台",
+      "fit": "AI 教育、乡村教育、教师素养、终身学习",
+      "aliases": [
+        "腾讯教育",
+        "腾讯学堂",
+        "腾讯教育学堂"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_class",
+      "group": "industry",
+      "name": "腾讯课堂",
+      "enabled": false,
+      "recommended": false,
+      "desc": "职业技能与终身学习平台",
+      "fit": "就业、技能培训、新职业",
+      "aliases": [
+        "腾讯课堂"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_security",
+      "group": "industry",
+      "name": "腾讯安全",
+      "enabled": false,
+      "recommended": false,
+      "desc": "安全能力，含守护者计划与反诈",
+      "fit": "反诈、未成年人保护、网络安全",
+      "aliases": [
+        "腾讯安全",
+        "守护者计划"
+      ],
+      "note": "反诈题材正向且政策友好，但需确认口径"
+    },
+    {
+      "id": "tencent_car",
+      "group": "industry",
+      "name": "腾讯车联",
+      "enabled": false,
+      "recommended": false,
+      "desc": "车联网与智慧出行",
+      "fit": "车路云、智慧出行",
+      "aliases": [
+        "腾讯车联",
+        "车联"
+      ],
+      "note": "主体多是地方政府，接入常显生硬"
+    },
+    {
+      "id": "tencent_travel",
+      "group": "industry",
+      "name": "腾讯文旅",
+      "enabled": false,
+      "recommended": false,
+      "desc": "文旅数字化解决方案",
+      "fit": "景区、文旅服务、城市形象",
+      "aliases": [
+        "腾讯文旅"
+      ],
+      "note": "涉地方政府行为时只做背景，不点评"
+    },
+    {
+      "id": "licaitong",
+      "group": "industry",
+      "name": "腾讯理财通",
+      "enabled": false,
+      "recommended": false,
+      "desc": "理财与财富管理平台",
+      "fit": "养老金融、普惠金融",
+      "aliases": [
+        "理财通",
+        "腾讯理财通"
+      ],
+      "note": "涉养老金等政策议题敏感度高，不宜主动发声"
+    },
+    {
+      "id": "ssv",
+      "group": "ssv",
+      "name": "SSV 可持续社会价值事业部",
+      "enabled": true,
+      "recommended": true,
+      "desc": "2021 年成立，主抓银发科技、乡村振兴、教育创新、基础科学、碳中和等方向",
+      "fit": "科技向善主阵地，几乎所有正向建设题材都可挂",
+      "aliases": [
+        "SSV",
+        "可持续社会价值"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_gongyi",
+      "group": "ssv",
+      "name": "腾讯公益 / 99 公益日",
+      "enabled": true,
+      "recommended": true,
+      "desc": "互联网募捐信息平台与年度公益节点",
+      "fit": "善意落地、陌生人互助、捐款与救助",
+      "aliases": [
+        "腾讯公益",
+        "99公益日",
+        "九九公益日"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tech_gongyi",
+      "group": "ssv",
+      "name": "腾讯技术公益",
+      "enabled": true,
+      "recommended": true,
+      "desc": "用技术能力解决社会问题的公益计划",
+      "fit": "技术志愿者、公益组织数字化、无障碍",
+      "aliases": [
+        "技术公益",
+        "腾讯技术公益"
+      ],
+      "note": ""
+    },
+    {
+      "id": "accessibility",
+      "group": "ssv",
+      "name": "信息无障碍",
+      "enabled": true,
+      "recommended": true,
+      "desc": "信息无障碍研究与产品改造，覆盖视障、听障、老年用户",
+      "fit": "无障碍改造、残障人士、适老化",
+      "aliases": [
+        "信息无障碍",
+        "无障碍"
+      ],
+      "note": ""
+    },
+    {
+      "id": "silver_tech",
+      "group": "ssv",
+      "name": "银发科技",
+      "enabled": true,
+      "recommended": true,
+      "desc": "面向老年人的科技产品与适老改造",
+      "fit": "适老化、老年人数字生活、养老服务",
+      "aliases": [
+        "银发科技",
+        "银发",
+        "适老"
+      ],
+      "note": ""
+    },
+    {
+      "id": "rural",
+      "group": "ssv",
+      "name": "共富乡村 / 为村",
+      "enabled": true,
+      "recommended": true,
+      "desc": "乡村振兴与乡村数字化项目",
+      "fit": "数字助农、乡村治理、返乡青年",
+      "aliases": [
+        "为村",
+        "共富乡村",
+        "腾讯为村"
+      ],
+      "note": ""
+    },
+    {
+      "id": "digital_culture",
+      "group": "ssv",
+      "name": "数字文化遗产",
+      "enabled": true,
+      "recommended": true,
+      "desc": "数字长城、数字敦煌等文化遗产数字化项目",
+      "fit": "文化传承、文物保护、传统工艺",
+      "aliases": [
+        "数字长城",
+        "数字敦煌",
+        "数字文化遗产"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_light",
+      "group": "ssv",
+      "name": "腾讯 Light·技术公益创造营",
+      "enabled": false,
+      "recommended": false,
+      "desc": "面向开发者与社会组织的技术公益赛事",
+      "fit": "技术公益项目孵化",
+      "aliases": [
+        "Light",
+        "技术公益创造营"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_foundation",
+      "group": "ssv",
+      "name": "腾讯公益慈善基金会",
+      "enabled": false,
+      "recommended": false,
+      "desc": "企业基金会，负责捐赠与公益项目资助",
+      "fit": "捐赠、救灾、公益资助",
+      "aliases": [
+        "腾讯基金会",
+        "腾讯公益慈善基金会"
+      ],
+      "note": ""
+    },
+    {
+      "id": "tencent_research",
+      "group": "ssv",
+      "name": "腾讯研究院",
+      "enabled": false,
+      "recommended": false,
+      "desc": "产业与政策研究，可做观点输出",
+      "fit": "行业观点、白皮书、趋势解读",
+      "aliases": [
+        "腾讯研究院"
+      ],
+      "note": "偏研究表达，不是产品能力"
+    }
+  ],
+  "custom_items": []
+}

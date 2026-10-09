@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>传播机会雷达 · 每日判读</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#ffffff; --line:#e8e5df; --line2:#d5d2c9;
+    --tx:#2b2b28; --tx2:#5c5b56; --tx3:#8b8a83;
+    --p0-bg:#fcebeb; --p0-fg:#a32d2d; --p0-bd:#f09595;
+    --p1-bg:#faeeda; --p1-fg:#854f0b; --p1-bd:#ef9f27;
+    --p2-bg:#f1efe8; --p2-fg:#5f5e5a; --p2-bd:#b4b2a9;
+    --risk-bg:#fcf3ed; --risk-fg:#993c1d;
+    --ok-bg:#eaf3de; --ok-fg:#3b6d11;
+    --brand:#185fa5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",sans-serif;
+    font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 56px}
+
+  /* ---------- 头部 ---------- */
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:24px 26px;margin-bottom:18px}
+  .hero h1{font-size:21px;font-weight:600;margin:0 0 6px;letter-spacing:.3px}
+  .hero .desc{color:var(--tx2);font-size:13.5px;margin-bottom:16px;line-height:1.7}
+  .hero .date{color:var(--tx3);font-size:12.5px}
+
+  /* ---------- 漏斗 ---------- */
+  .funnel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 26px;margin-bottom:26px}
+  .funnel .fh{font-size:13px;color:var(--tx3);margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .funnel .fh b{font-size:14px;color:var(--tx);font-weight:600}
+  .frow{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+  .frow .lab{flex:none;width:96px;font-size:12.5px;color:var(--tx2);text-align:right}
+  .frow .track{flex:1;height:26px;background:#f2f0ea;border-radius:6px;overflow:hidden}
+  .frow .fill{height:100%;border-radius:6px;display:flex;align-items:center;
+    padding-left:10px;color:#fff;font-size:12.5px;font-weight:600;
+    min-width:52px;white-space:nowrap;
+    transition:width .8s cubic-bezier(.22,1,.36,1)}
+  .frow .num{flex:none;width:52px;font-size:12.5px;color:var(--tx3);text-align:right}
+  .fnote{margin-top:12px;font-size:12.5px;color:var(--tx3);line-height:1.7;
+    padding-top:12px;border-top:1px dashed var(--line2)}
+
+  /* ---------- 区块标题 ---------- */
+  .sec-h{display:flex;align-items:center;gap:9px;margin:28px 0 13px;flex-wrap:wrap}
+  .sec-h .t{font-size:15.5px;font-weight:600}
+  .sec-h .c{font-size:12px;color:var(--tx3)}
+  .sec-h .bar{width:3px;height:16px;border-radius:2px;background:var(--line2);
+    display:inline-block}
+
+  /* ---------- 人物卡 ---------- */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    border-left:3px solid #afa9ec;padding:16px 18px}
+  .pcard .ph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .avatar{flex:none;width:34px;height:34px;border-radius:9px;background:#eeedfe;
+    color:#534ab7;font-size:15px;font-weight:600;display:flex;
+    align-items:center;justify-content:center}
+  .pcard .nm{font-size:15px;font-weight:600;line-height:1.35}
+  .pcard .tp{font-size:11.5px;color:#534ab7;background:#eeedfe;border:1px solid #afa9ec;
+    border-radius:5px;padding:1px 7px;display:inline-block;margin-top:3px}
+  .pcard .ht{margin-left:auto;font-size:12px;color:var(--tx3);flex:none;text-align:right}
+  .pcard .ht b{display:block;font-size:14px;color:#993c1d;font-weight:600}
+  .pcard .ps{font-size:13px;color:var(--tx2);line-height:1.65;margin-bottom:9px}
+
+  /* ---------- 机会卡 ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .card.p0{border-left:3px solid var(--p0-bd)}
+  .card.p1{border-left:3px solid var(--p1-bd)}
+  .card.p2{border-left:3px solid var(--p2-bd)}
+  .top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+  .badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px;
+    white-space:nowrap;flex:none;margin-top:2px}
+  .badge.P0{background:var(--p0-bg);color:var(--p0-fg);border:1px solid var(--p0-bd)}
+  .badge.P1{background:var(--p1-bg);color:var(--p1-fg);border:1px solid var(--p1-bd)}
+  .badge.P2{background:var(--p2-bg);color:var(--p2-fg);border:1px solid var(--p2-bd)}
+  .ttl{font-size:15px;font-weight:600;line-height:1.5}
+  .ttl a{color:var(--tx);text-decoration:none;border-bottom:1px solid var(--line2)}
+  .ttl a:hover{color:var(--brand);border-bottom-color:var(--brand)}
+  .score{margin-left:auto;font-size:12px;color:var(--tx3);flex:none;padding-top:3px}
+  .meta{font-size:12px;color:var(--tx3);margin-bottom:11px;display:flex;
+    gap:7px;flex-wrap:wrap;align-items:center}
+  .tag{background:#f1efe8;border-radius:5px;padding:1px 7px;color:var(--tx2)}
+  .tag.gov{background:var(--ok-bg);color:var(--ok-fg)}
+  .tag.hot{background:#faece7;color:#993c1d}
+  .row{display:flex;gap:9px;margin-bottom:7px;font-size:13.5px;line-height:1.65}
+  .row .k{flex:none;width:74px;color:var(--tx3);font-size:12.5px;padding-top:1px}
+  .row .v{flex:1;color:var(--tx)}
+  .row.ev .v{color:var(--tx2)}
+  .row.risk .v{color:var(--risk-fg)}
+  .row.risk .k{color:var(--risk-fg)}
+  .row.biz .k,.row.biz .v{color:var(--brand)}
+  .row.act .v{color:var(--brand)}
+  .src{display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+    margin:0 0 10px;font-size:12.5px}
+  .src .m{background:var(--ok-bg);color:var(--ok-fg);border-radius:5px;
+    padding:1px 8px;font-weight:600}
+  .src a{color:var(--brand);text-decoration:none;white-space:nowrap}
+  .src a:hover{text-decoration:underline}
+  .src .more{color:var(--tx3)}
+  .empty{background:var(--card);border:1px dashed var(--line2);border-radius:12px;
+    padding:16px 18px;color:var(--tx2);font-size:13.5px;margin-bottom:12px}
+
+  /* ---------- P2 紧凑列表 ---------- */
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:6px 18px;margin-bottom:12px}
+  .mrow{display:flex;gap:10px;align-items:baseline;padding:9px 0;
+    border-bottom:1px solid #f2f0ea;font-size:13.5px}
+  .mrow:last-child{border-bottom:0}
+  .mrow .mt{flex:1;line-height:1.55}
+  .mrow .mt a{color:var(--tx);text-decoration:none}
+  .mrow .mt a:hover{color:var(--brand)}
+  .mrow .mm{flex:none;font-size:12px;color:var(--tx3)}
+  .mrow .mb{flex:none;font-size:11.5px;color:var(--brand);max-width:180px;
+    text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--tx3);line-height:1.85}
+
+  /* ---------- 窄屏适配（嵌入 iframe / 手机） ---------- */
+  @media (max-width:640px){
+    .wrap{padding:18px 14px 40px}
+    .hero{padding:18px 18px}
+    .hero h1{font-size:18px}
+    .funnel{padding:16px 16px}
+    .frow .lab{width:70px;font-size:12px}
+    .frow .num{width:44px}
+    .pgrid{grid-template-columns:1fr}
+    .row{flex-direction:column;gap:2px}
+    .row .k{width:auto}
+    .mrow{flex-direction:column;gap:3px}
+    .mrow .mb{max-width:none;text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+window.RADAR_DATA = {"date": "2026-10-08", "built_at": "2026-10-08T20:20:09+08:00", "focus": ["AI普惠 / 适老化 / 无障碍", "凡人微光人物故事", "乡村振兴 / 数字助农", "以上为加分项，不再是准入门槛 —— 任何腾讯可正向接入的机会都纳入"], "p0_note": "今日仍无 P0。热榜出现了多个正向素人事件（结婚小伙、葫芦娃爷爷、莫叔），但尚未见官媒跟进报道，缺“官媒背书 + 正在起量”的交集。若其中任一条被央媒接手，可立即升 P0。", "stats": {"raw": 222, "blocked": 127, "candidates": 83, "judged": 16, "p0": 0, "p1": 6, "p2": 10, "people": 4}, "scope_note": "口径已放宽：不再只盯三个题材方向。凡是腾讯能以正向方式接入的传播机会都推荐，三个方向仅用于加权。红线不变 —— 涉负面、涉争议、涉政敏感、竞品主体、以及内核是给官方纠错挑错的一律排除。", "people": [{"id": "6dc33b60d204", "name": "结婚邀网友吃席的小伙", "type": "素人善意出圈", "why": "结婚发邀请、真来了 130 多位陌生网友，善意被陌生人接住，情绪极正。是今天热榜上最干净的一条正能量。", "usable": "典型凡人微光 + 陌生人善意主题，适合做品牌叙事的载体，也可做“善意能落地”的平台侧叙事。", "risk": "需核实是否已有商业介入或摆拍质疑；热度在峰值，48 小时内决策。", "heat": 6371828, "title": "小伙结婚邀全国网友吃席：来了130多人", "urls": ["https://www.baidu.com/s?wd=%E5%B0%8F%E4%BC%99%E7%BB%93%E5%A9%9A%E9%82%80%E5%85%A8%E5%9B%BD%E7%BD%91%E5%8F%8B%E5%90%83%E5%B8%AD%EF%BC%9A%E6%9D%A5%E4%BA%86130%E5%A4%9A%E4%BA%BA"], "sources": ["百度热搜"], "media": "腾讯新闻", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QXR5jNqJLrbwWYpP5eeJ1Ws", "reports": [{"media": "腾讯新闻", "title": "武汉小伙结婚邀全国网友吃席:不用随礼带张嘴就行,130多名网友...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QXR5jNqJLrbwWYpP5eeJ1Ws", "snippet": "color: #205aef; 武汉 小伙结婚邀全国网友吃席: 不用随礼带张嘴就行, 130多名网友 ... 武汉 小伙结婚邀全国网友吃席： 不用随礼带张嘴就行， 130 多名网友赶来，新郎临时加10桌 九派新闻 2026-10-07"}, {"media": "今日头条", "title": "小伙国庆收8张婚贴份子钱给麻了：恐要借钱吃席-今日头条", "url": "https://www.sogou.com/link?url=hedJjaC291PD0T3DYzJqFDoBhFbePHvernilvTOuwmlr7NvRCTWHQQWn6XneZPcCR6RBNsoRUMs.", "snippet": "color: #205aef; 小伙 国庆收8张婚贴 份子钱给麻了：恐要借钱 吃席 今日头条 但扎堆 结婚 也给“打工人”带 来了 不小经济压力。 近日，社交网络平台关于... 而心疼份子钱，也是"}, {"media": "网易", "title": "太尴尬,男子参加婚礼吃错席,网友：隔着屏幕都替他尴尬|酒席|来的...", "url": "https://www.sogou.com/link?url=hedJjaC291NbWrwHYHKCyPQj_ei8OKC1mozqur8NczZzp5jSzTRhHll2pwpuBwqR0ztd7q5nl6o.", "snippet": "color: #205aef; 太尴尬,男子参加婚礼吃错席, 网友 ：隔着屏幕都替他尴尬|酒席|来的... 反倒是大方地表示：来都 来了 ，来的都是客有 网友 调侃：吃错不可怕，随错礼才可怕说起来，很多时候，尴尬和误解就是这么发生的。可让人意外的是，这... 网易 https://www.163.com/d... 2025-01-19"}, {"media": "网易", "title": "一男子结婚无人捧场,全村无1人吃席,村民：他就是回来骗红包的|发...", "url": "https://www.sogou.com/link?url=hedJjaC291NbWrwHYHKCyPQj_ei8OKC13fJZ5YRQyvi3ZYdzkXLU5mAsV0DgIc-b0ztd7q5nl6o.", "snippet": "color: #205aef; 一男子 结婚 无人捧场,全村无1人 吃席 ,村民：他就是 回来 骗红包的|发... 但他们万万没想到，儿子 结婚 当天，女方一家竟然为村民们准备了100多桌酒席，因为他们担心一千 多人 到了城里就没有座位了。婚礼前，女方提前向村民..."}, {"media": "微信公众号", "title": "不用随礼,带张嘴就行:130多个陌生人跨省来吃席", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447607&amp;ver=7013&amp;signature=O45Uqd9Iv0ZkKh5HFJ7HeYvhb9Fmy1owDVIykBfKDg7rjOF5u-Bh2sf*ZQoNsWC8TPT*WNW063uxfmFRnO4HAq8e5823XjxL6Fj3sgJESPsKfd3nV10418v0xYDOIe4w&amp;new=1", "snippet": "陌生 跨省 来吃席 &quot;不欠人情才是真自在&quot;,几乎已经成了一条常识.可总该有一顿饭, 吃了 不用还.那天在武汉黄陂,有人把它做出 来了 130多 个人,真的 来了 .内容来源:网络# 小伙结婚邀全国网友吃席:来了130多人 #,仅供参考! 公众号"}], "summary_raw": "color: #205aef; 武汉 小伙结婚邀全国网友吃席: 不用随礼带张嘴就行, 130多名网友 ... 武汉 小伙结婚邀全国网友吃席： 不用随礼带张嘴就行， 130 多名网友赶来，新郎临时加10桌 九派新闻 2026-10-07", "summary": "武汉黄陂小伙结婚时发帖邀网友来吃席，结果 130 多位陌生网友真的跨省赴约，热榜热度 637 万，是当天情绪最干净的一条。"}, {"id": "88ffc57868e4", "name": "“葫芦娃爷爷”", "type": "素人走红", "why": "以绰号出圈的长辈，画面感强、亲切、无争议，属于典型的“被网友自发喜欢上的普通人”。", "usable": "人物鲜活、可做长期人物向内容；适合作为凡人微光系列的选题原型。", "risk": "标题信息不足，需先核实人物身份与背景，确认不是地方文旅营销或 MCN 包装。", "heat": 5051251, "title": "“葫芦娃爷爷”的秋天", "urls": ["https://www.baidu.com/s?wd=%E2%80%9C%E8%91%AB%E8%8A%A6%E5%A8%83%E7%88%B7%E7%88%B7%E2%80%9D%E7%9A%84%E7%A7%8B%E5%A4%A9"], "sources": ["百度热搜"], "media": "新京报网", "url": "https://www.sogou.com/link?url=hedJjaC291PDlKZwXTBz-bT1ehzWEguoqijgiLPajFpGObYZUkygUmfQ3jawCr9GNqEsBdGrtsw.", "reports": [{"media": "新京报网", "title": "“葫芦娃爷爷”的秋天—新京报", "url": "https://www.sogou.com/link?url=hedJjaC291PDlKZwXTBz-bT1ehzWEguoqijgiLPajFpGObYZUkygUmfQ3jawCr9GNqEsBdGrtsw.", "snippet": "color: #205aef; 葫芦娃爷爷 的秋天 新京报 75岁的陈金敖没有想过，这个 秋天 会成为他人生中最热闹的一段日子。 今年3月，他在... 爷爷 葫芦娃 ”。 此后一个多月里，陈金敖家挂满葫芦的阳台成为绍兴书圣故里的热... 新京报网"}, {"media": "哔哩哔哩", "title": "【葫芦娃】爷爷对孩子们的爱护与情谊是第一部里感动我至深的一个点...", "url": "https://www.sogou.com/link?url=hedJjaC291ObqPUCEo1zMuraEuczo-4WCU_PNz9JM0uwjfrHKRbJR3DbM-fo9rOb", "snippet": "color: #205aef; 葫芦娃 爷爷 对孩子们的爱护与情谊 是第一部里感动我至深的一个点... 葫芦娃 爷爷 一个一个送”，【 葫芦娃 】当金蛇青蛇姐妹俩配上哪吒传奇主题曲，当 葫芦娃 配上《猴哥》BGM，凭着一个锦囊乾坤袋就制服了六个 葫芦娃"}, {"media": "哔哩哔哩", "title": "这剧情属实是想不到呀,葫芦娃的爷爷也是左右为难_剧情", "url": "https://www.sogou.com/link?url=hedJjaC291ObqPUCEo1zMuraEuczo-4WCU_PNz9JM0s5kI4V8JarTWDDiIruATqh", "snippet": "color: #205aef; 这剧情属实是想不到呀, 葫芦娃 爷爷 也是左右为难_剧情 简介：我滴个神啊；已有6851名玩家向您推荐本视频，点击前往哔哩哔哩bilibili一起观看；更多实用攻略教学，爆笑沙雕集锦，你所不知道的游戏知识，热... 哔哩哔哩 https://www.bilibili.com/v... 2023-03-27"}, {"media": "爱奇艺", "title": "葫芦娃爷爷-爱奇艺", "url": "https://www.sogou.com/link?url=hedJjaC291PJKaY1ZBCq45jwJMGPsBnJKUSG4DIdHCCi39mr1ACsqw..", "snippet": "color: #205aef; 葫芦娃爷爷 -爱奇艺 年份： 2018 [天天新衣999] 葫芦娃爷爷 。精彩内容，就在爱奇艺立即看。 视频名称 葫芦娃爷爷 所属频道 少儿 观看方式"}, {"media": "微信公众号", "title": "“葫芦娃爷爷”的秋天", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447613&amp;ver=7013&amp;signature=zq4gAPVhGcwkbmPJHcmtnyhkGTnRH3migHZ6esxjugcoaECX--2LloQY4JULw8tM3KxqSanGIfIx5JtUySJIwZa11vw4C-BM83b91*ttGkiGQc8Vs3FCOqzhAoYvxWNk&amp;new=1", "snippet": "李立军75岁的陈金敖没有想过,这个 秋天 会成为他人生中最热闹的一段日子.今年3月,他在菜市场买了3株 葫芦 苗,在阳台上搭起棚架....“ 爷爷 葫芦娃 ”.此后一个多月里,陈金敖家挂满 葫芦的 阳台成为绍兴书圣故里的热门打卡地,直到现在他也不完全明白自己为什么走红,但突然的流量和热闹的的确确敲开了他的心门.... 公众号 http://mp.weixin"}], "summary_raw": "color: #205aef; 葫芦娃爷爷 的秋天 新京报 75岁的陈金敖没有想过，这个 秋天 会成为他人生中最热闹的一段日子。 今年3月，他在... 爷爷 葫芦娃 ”。 此后一个多月里，陈金敖家挂满葫芦的阳台成为绍兴书圣故里的热... 新京报网", "summary": "绍兴书圣故里 75 岁的陈金敖，今年 3 月在阳台种下 3 株葫芦苗，挂满葫芦的阳台意外成了打卡点，被游客叫作“葫芦娃爷爷”，他自己也说不清为什么红。"}, {"id": "182130a91f2f", "name": "莫叔（莫氏鸡煲）", "type": "小店主爆火", "why": "小店因口碑爆火后投入 600 万扩大规模，是“被流量选中后踏实做事”的正向样本。", "usable": "小微商家数字化经营是腾讯能自然接入的方向（收款、点单、会员、供应链），接入点比多数条目实在。", "risk": "接入点偏商业，做成广告就废了；必须以人物故事为主线，能力只做背景。", "heat": 3694595, "title": "莫氏鸡煲莫叔投入600万扩大规模", "urls": ["https://www.baidu.com/s?wd=%E8%8E%AB%E6%B0%8F%E9%B8%A1%E7%85%B2%E8%8E%AB%E5%8F%94%E6%8A%95%E5%85%A5600%E4%B8%87%E6%89%A9%E5%A4%A7%E8%A7%84%E6%A8%A1"], "sources": ["百度热搜"], "media": "南方日报", "url": "https://www.sogou.com/link?url=hedJjaC291P_6If5ZRrEoze1DoGi43lt--vPV2sjUckKny7e8OwQS_hEjq0vem9E", "reports": [{"media": "南方日报", "title": "爆火五个月后,莫氏鸡煲开分店计划搁置,老莫又投入600万元办养鸡...", "url": "https://www.sogou.com/link?url=hedJjaC291P_6If5ZRrEoze1DoGi43lt--vPV2sjUckKny7e8OwQS_hEjq0vem9E", "snippet": "color: #205aef; 爆火五个月后, 莫氏鸡煲 开分店计划搁置,老莫又 投入600万 元办养鸡... 他现在投资了两个养鸡场，建立了合作社， 投入 600万 扩大规模 。其中300万 是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔"}, {"media": "腾讯新闻", "title": "...他表示,不仅店面改造升级,还投入约600万元扩大规模养鸡,背上...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QUclHyMizI-82YpP5eeJ1Ws", "snippet": "color: #205aef; ...他表示,不仅店面改造升级,还 投入 600万 扩大规模 养鸡,背上... 莫氏鸡煲 ”爆火半年之后回访 莫叔 ，他表示，不仅店面改造升级，还 投入 600万 扩大规模"}, {"media": "映象网", "title": "莫氏鸡煲为养鸡暂缓开店投入约600万养鸡搞好品质", "url": "https://www.sogou.com/link?url=6IqLFeTuIyhpMmUVc94xB2BT9ZjTkRhfNRmj4bgxClLKpDbmXM8QSyy4ZeLROBAWvGE_febHK7s.", "snippet": "color: #205aef; 莫氏鸡煲 为养鸡暂缓开店 投入 600万 养鸡搞好品质 热点推荐 不排队、不打卡！年轻人为啥爱上缝纫机课 “奔县深度游”成了新时尚！宝藏小城为何“藏”不住了 微胖可能是保命的本钱 研究发现：太瘦的人，反而更危险 国庆长... 映象网"}, {"media": "新快网", "title": "莫氏鸡煲深圳分店计划泡汤,莫叔平静回应：为了养鸡场,儿女都已...", "url": "https://www.sogou.com/link?url=hedJjaC291OUlpdsToswgDeQh9RPnUSuT-6fs1jIlLOURPRknziHsjceoMwG1IuZ", "snippet": "color: #205aef; 莫氏鸡煲 深圳分店计划泡汤, 莫叔 平静回应：为了养鸡场,儿女都已... 投入 600万 元来 扩大规模 。其中300万元是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔 称，要先保证好食材品质，天气冷了，吃鸡的人按照常理... 新快网"}, {"media": "微信公众号", "title": "爆火5个月,莫氏鸡煲老板砸600万自建养鸡场:门店再多,品质不...", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447622&amp;ver=7013&amp;signature=YVUNzPFbwew2uDJjDb2UaDvgBYUM*mRzlEZAYMuqxdJ7Zl9uLQH5S9auMYdlsPZ*t3dZHy6yiKJg059iI9P7f3fjPiT0kSWEWXgyWA0atFiI*k3YvxV0NL8deZ2nWtxu&amp;new=1", "snippet": "老板砸 600万 自建养鸡场:门店再多,品质不... 为守住鸡肉品质, 莫叔 前后 投入600万 ,建起两座养鸡场,成立合作社.这笔资金一半来自贷款,一半是亲友拼凑而来.也正是这个决定,让他暂缓了深圳开分店的计划.他还拿出20万翻新厨房,打造全透明操作间.从杀鸡、斩 到分装,全程流水线作业.... 公众号 http://mp.weixin.qq.com/c."}], "summary_raw": "color: #205aef; 爆火五个月后, 莫氏鸡煲 开分店计划搁置,老莫又 投入600万 元办养鸡... 他现在投资了两个养鸡场，建立了合作社， 投入 600万 扩大规模 。其中300万 是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔", "summary": "佛山顺德莫氏鸡煲创始人莫叔，今年 4 月因口碑爆火，随后投入 600 万自建养鸡场守住品质、暂缓开分店，如今客流回落，面对的是爆火之后的日子。"}, {"id": "36f5cd3f9299", "name": "铺床的文旅局长", "type": "基层干部正面出圈", "why": "因接待学生铺床被关注，县政府写信感谢学生，官方与民间双向善意，属少见的官民良性互动。", "usable": "城市形象与文旅服务议题，可做轻量正向内容。", "risk": "涉基层政府，腾讯只能做背景或平台角色，不点评政府行为；热度已低。", "heat": 248094, "title": "文旅局长铺床后续：县政府写信感谢学生", "urls": ["https://www.toutiao.com/trending/7694087379316903450/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%225%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227694087379316903450%22%2C%22hot_board_impr_id%22%3A%22202610081429347B8C53835880A90C6D84%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E6%96%87%E6%97%85%E5%B1%80%E9%95%BF%E9%93%BA%E5%BA%8A%E5%90%8E%E7%BB%AD%EF%BC%9A%E5%8E%BF%E6%94%BF%E5%BA%9C%E5%86%99%E4%BF%A1%E6%84%9F%E8%B0%A2%E5%AD%A6%E7%94%9F%22%7D&rank=&style_id=40132&topic_id=7694087379316903450"], "sources": ["头条热榜"], "media": "澎湃新闻", "url": "https://www.sogou.com/link?url=hedJjaC291MxGeA-SVBACwNdbrwv1ozqnY8kqmjk2QVYEjW4L09UpAKGDPdI649kGGgkGxmia-w.", "reports": [{"media": "澎湃新闻", "title": "10万人涌入5万人口的青海祁连县,文旅局长给游客铺床_直击现场_澎...", "url": "https://www.sogou.com/link?url=hedJjaC291MxGeA-SVBACwNdbrwv1ozqnY8kqmjk2QVYEjW4L09UpAKGDPdI649kGGgkGxmia-w.", "snippet": "color: #205aef; 10万人涌入5万人口的青海祁连县, 文旅局长 给游客 铺床 _直击现场_澎... 文旅局长 给游客 铺床 3日的一段网络视频中，祁连县文体旅游广电局党组书记、局长冯玲玲在一 学生 宿舍给游客铺被褥，搬行李。 4日下午，冯玲玲接受极目新闻记者采访时表..."}, {"media": "腾讯新闻", "title": "祁连县协调学生宿舍解决游客住宿,文旅局长回应争议!县政府写信...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QVLjwEOb7MRImYpP5eeJ1Ws", "snippet": "color: #205aef; 祁连 协调 学生 宿舍解决游客住宿, 文旅局长 回应争议! 县政府写信 ... 祁连县协调学生宿舍解决游客住宿，文旅局长回应争议！ 县政府写信感谢学生 ，会排查物品丢失情况 “10万游客涌进5万人的县城”“"}, {"media": "搜狐网", "title": "“10万游客涌进5万人的县城”后续:县政府写信感谢学生,给学生发...", "url": "https://www.sogou.com/link?url=hedJjaC291Ok-E9WTygIKll2MrIoS4vqa1KY1ipITJvroat_jXvrdKIwznClwsBj", "snippet": "color: #205aef; “10万游客涌进5万人的县城” 后续:县政府写信感谢学生 ,给学生发... “10万游客涌进5万人的县城”“ 文旅局长铺床 ”……近日，青海省祁连县接连火上热搜。 对此，祁连县紧急协调 学生 宿舍，解决住宿难题。尽管入住游客好评不... 搜狐网 https://www.sohu.com/a... 16小时前"}, {"media": "今日头条", "title": "文旅局让游客住学校后续-今日头条", "url": "https://www.sogou.com/link?url=hedJjaC291PD0T3DYzJqFDoBhFbePHveP89JZJyfrfSAvrePUbJ0ykxNcaR5ZMRs0rspllwLGPo.", "snippet": "color: #205aef; 文旅局 让游客住学校 后续 -今日头条 资讯 游客住到 文旅局长 家，不妨订好住宿再出发 新京报快评 “说走就走”的旅行，体... 您在查找 文旅局"}, {"media": "微信公众号", "title": "“10万游客涌进5万人的县城,文旅局长铺床”后续:县政府写...", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447637&amp;ver=7013&amp;signature=bxbAXwjqhUY81sk*dBAyZD5LsjBwLr8MYTX99ByvKyHOXYVnr8tOG-PC7u-vXOH-3G7aviseVOS9nj1uFY0ou1JCsu514EWXisYH9rPvg*CYgYwLz76kGxDm9k9rIPia&amp;new=1", "snippet": "后续:县政府写 ... “10万游客涌进5万人的县城”“ 文旅局长铺床 ”……近日,青海省祁连 接连火上热搜.对此,祁连 紧急协调 学生 宿舍,解决住宿难题.尽管入住游客好评不断,但网上还是有不同声音,比如是否侵犯 学生 相关权益.10月8日,祁连 文体旅游广电局局长冯玲玲等人,在《人民日报》的《一座高原小城的暖心安置》一文中做了回应.... 公众号 htt"}], "summary_raw": "color: #205aef; 10万人涌入5万人口的青海祁连县, 文旅局长 给游客 铺床 _直击现场_澎... 文旅局长 给游客 铺床 3日的一段网络视频中，祁连县文体旅游广电局党组书记、局长冯玲玲在一 学生 宿舍给游客铺被褥，搬行李。 4日下午，冯玲玲接受极目新闻记者采访时表...", "summary": "青海祁连文旅局长冯玲玲，10 万游客涌进 5 万人县城时协调学生宿舍安置并亲自铺床走红，后与同事在人民日报刊文感谢学生；网上亦有争议声音。"}], "cases": [{"id": "6dc33b60d204", "title": "小伙结婚邀全国网友吃席：来了130多人", "urls": ["https://www.baidu.com/s?wd=%E5%B0%8F%E4%BC%99%E7%BB%93%E5%A9%9A%E9%82%80%E5%85%A8%E5%9B%BD%E7%BD%91%E5%8F%8B%E5%90%83%E5%B8%AD%EF%BC%9A%E6%9D%A5%E4%BA%86130%E5%A4%9A%E4%BA%BA"], "sources": ["百度热搜"], "source_count": 1, "on_hotlist": true, "official": false, "official_tier": "", "heat": 6371828, "best_rank": 17, "topic_tags": ["ordinary_people"], "person_hits": ["身份:小伙"], "is_person": true, "media": "腾讯新闻", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QXR5jNqJLrbwWYpP5eeJ1Ws", "reports": [{"media": "腾讯新闻", "title": "武汉小伙结婚邀全国网友吃席:不用随礼带张嘴就行,130多名网友...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QXR5jNqJLrbwWYpP5eeJ1Ws", "snippet": "color: #205aef; 武汉 小伙结婚邀全国网友吃席: 不用随礼带张嘴就行, 130多名网友 ... 武汉 小伙结婚邀全国网友吃席： 不用随礼带张嘴就行， 130 多名网友赶来，新郎临时加10桌 九派新闻 2026-10-07"}, {"media": "今日头条", "title": "小伙国庆收8张婚贴份子钱给麻了：恐要借钱吃席-今日头条", "url": "https://www.sogou.com/link?url=hedJjaC291PD0T3DYzJqFDoBhFbePHvernilvTOuwmlr7NvRCTWHQQWn6XneZPcCR6RBNsoRUMs.", "snippet": "color: #205aef; 小伙 国庆收8张婚贴 份子钱给麻了：恐要借钱 吃席 今日头条 但扎堆 结婚 也给“打工人”带 来了 不小经济压力。 近日，社交网络平台关于... 而心疼份子钱，也是"}, {"media": "网易", "title": "太尴尬,男子参加婚礼吃错席,网友：隔着屏幕都替他尴尬|酒席|来的...", "url": "https://www.sogou.com/link?url=hedJjaC291NbWrwHYHKCyPQj_ei8OKC1mozqur8NczZzp5jSzTRhHll2pwpuBwqR0ztd7q5nl6o.", "snippet": "color: #205aef; 太尴尬,男子参加婚礼吃错席, 网友 ：隔着屏幕都替他尴尬|酒席|来的... 反倒是大方地表示：来都 来了 ，来的都是客有 网友 调侃：吃错不可怕，随错礼才可怕说起来，很多时候，尴尬和误解就是这么发生的。可让人意外的是，这... 网易 https://www.163.com/d... 2025-01-19"}, {"media": "网易", "title": "一男子结婚无人捧场,全村无1人吃席,村民：他就是回来骗红包的|发...", "url": "https://www.sogou.com/link?url=hedJjaC291NbWrwHYHKCyPQj_ei8OKC13fJZ5YRQyvi3ZYdzkXLU5mAsV0DgIc-b0ztd7q5nl6o.", "snippet": "color: #205aef; 一男子 结婚 无人捧场,全村无1人 吃席 ,村民：他就是 回来 骗红包的|发... 但他们万万没想到，儿子 结婚 当天，女方一家竟然为村民们准备了100多桌酒席，因为他们担心一千 多人 到了城里就没有座位了。婚礼前，女方提前向村民..."}, {"media": "微信公众号", "title": "不用随礼,带张嘴就行:130多个陌生人跨省来吃席", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447607&amp;ver=7013&amp;signature=O45Uqd9Iv0ZkKh5HFJ7HeYvhb9Fmy1owDVIykBfKDg7rjOF5u-Bh2sf*ZQoNsWC8TPT*WNW063uxfmFRnO4HAq8e5823XjxL6Fj3sgJESPsKfd3nV10418v0xYDOIe4w&amp;new=1", "snippet": "陌生 跨省 来吃席 &quot;不欠人情才是真自在&quot;,几乎已经成了一条常识.可总该有一顿饭, 吃了 不用还.那天在武汉黄陂,有人把它做出 来了 130多 个人,真的 来了 .内容来源:网络# 小伙结婚邀全国网友吃席:来了130多人 #,仅供参考! 公众号"}], "summary_raw": "color: #205aef; 武汉 小伙结婚邀全国网友吃席: 不用随礼带张嘴就行, 130多名网友 ... 武汉 小伙结婚邀全国网友吃席： 不用随礼带张嘴就行， 130 多名网友赶来，新郎临时加10桌 九派新闻 2026-10-07", "priority": "P1", "score": 75, "topic": "凡人微光 · 陌生人善意", "opportunity": "今天热榜上最干净的一条：素人善意被陌生人接住，情绪极正、无争议、传播基础现成，且有具体数字（130 多人）支撑。", "tencent_angle": "腾讯做记录者与传播平台，把“善意能落地”这件事讲出来。角色是让故事被看见，不抢叙事。", "risk": "需先核实是否已有商业介入或摆拍质疑，若有则放弃。", "action": "优先核真实性（有无媒体跟进、当事人是否可被找到），确认后今天内定产出形式。", "window": "热度在峰值，24-48 小时", "summary": "武汉黄陂一小伙结婚，在网上发帖邀请网友来吃席，起初更像一句玩笑。结果真有 130 多位陌生网友跨省赶赴，婚宴办成了一场陌生人的聚会。10 月 8 日冲上百度热搜，热度 637 万，是当天热榜上情绪最干净的一条——善意发出去，被陌生人接住了。", "biz": "微信 / 视频号 · 陌生人善意是最容易被转发的内容形态，可做视频号与微信状态的传播载体；也可接腾讯公益，讲“善意能落地”。"}, {"id": "76d5011aa391", "title": "引导学生巧用AI，把“听讲”变成“探究”", "urls": ["http://scitech.people.com.cn/n1/2026/1006/c1007-40809872.html"], "sources": ["人民网科技"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": ["ai_public_good"], "person_hits": ["身份:学生"], "is_person": true, "media": "人民网科技", "url": "http://scitech.people.com.cn/n1/2026/1006/c1007-40809872.html", "reports": [{"media": "人民网科技", "title": "引导学生巧用AI，把“听讲”变成“探究”", "url": "http://scitech.people.com.cn/n1/2026/1006/c1007-40809872.html"}], "summary_raw": "近年来，AI与思政课结合的各种尝试不少，公开展示课上，教师通过AI与学生互动的环节愈发常见。思政课最怕两种状况：一是互不干扰，老师讲得口干舌燥，学生低头刷手机；二是假热闹，搞一堆花里胡哨的形式，但一堂课下来学生什么也没记住。说实话，刚开始把AI带进课堂时，我心里也打鼓：AI会不会变成另一种新的“花架子”？会不会让学生不动脑，直接抄答案？带着这些顾虑，我在特色班的课堂上做了几次尝试，效果出乎意料。 ", "priority": "P1", "score": 72, "topic": "AI普惠 · 教育", "opportunity": "央媒主动设置的 AI 向善议题——讨论“学生如何巧用 AI”，而不是 AI 风险叙事，这类正面框架很少见，是安全的发声窗口。", "tencent_angle": "工具提供方角色：面向师生的 AI 工具与 AI 素养内容。讲“给老师和学生提供用得上的能力”，不讲腾讯自己多先进。", "risk": "涉及未成年人，教育议题敏感度高，措辞必须稳妥；严禁出现“替学生写作业”类表述。", "action": "先读原文确认是哪所学校/地区的实践，评估是否有真实合作抓手；若无具体项目，先归入 AI 素养议题池。", "window": "议题型非事件型，10-06 发布，窗口期约 1-2 周", "summary": "人民网科技 10 月 6 日刊发一位思政课教师的自述。他说思政课最怕两种状况：老师讲得口干舌燥、学生低头刷手机；以及搞一堆花里胡哨的形式，一节课下来什么也没记住。他试着把 AI 带进课堂，让学生在对话里自己查证、追问，把“听讲”变成“探究”，也坦白刚开始担心 AI 只是变成新的花架子。这是央媒少见的 AI 向善正面框架，谈的不是风险。", "biz": "腾讯学堂 / 腾讯教育 · 面向师生的 AI 工具与 AI 素养内容，角色是给老师和学生提供用得上的能力，不谈自己多先进。"}, {"id": "01d90bf88923", "title": "拧紧智能体支付应用“安全阀”", "urls": ["http://finance.people.com.cn/n1/2026/1003/c1004-40809040.html"], "sources": ["人民网科技"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": ["ai_public_good"], "person_hits": [], "is_person": false, "media": "人民网科技", "url": "http://finance.people.com.cn/n1/2026/1003/c1004-40809040.html", "reports": [{"media": "人民网科技", "title": "拧紧智能体支付应用“安全阀”", "url": "http://finance.people.com.cn/n1/2026/1003/c1004-40809040.html"}], "summary_raw": "对着手机说一句“帮我订一张下午两点的电影票，顺路买一杯冰美式咖啡”，话音落下不过数秒，选座、比价、下单便全部完成。这不是科幻电影里的桥段，而是智能体支付走进现实的日常。当人工智能从“出主意的参谋”变成“能花钱的助手”，一个问题始终悬在用户心头：我的钱，人工智能真的能管住吗？ 近期，中国支付清算协会（以下简称“协会”）印发《智能体支付应用自律公约》（以下简称《公约》），自发布之日起实施。据悉，《公约", "priority": "P1", "score": 70, "topic": "AI普惠 · 智能体支付", "opportunity": "AI 智能体支付是新兴议题，官媒关注的是“安全阀”而非叫停，说明监管口径是规范而非禁止，企业有正向发声空间。", "tencent_angle": "微信支付在智能体场景下的风控与用户确认机制，可以做“我们怎么给用户上锁”的技术向沟通。", "risk": "需人工确认。涉及支付合规与监管口径，对外表述必须先过法务/合规；腾讯不宜主动定义行业标准，只能谈自身实践。", "action": "先向支付团队确认当前对外口径，再决定是否跟进，不要抢在合规确认之前发声。", "window": "议题型，10-03 发布，适合做中期议题储备", "summary": "人民网 10 月 3 日报道。对着手机说一句“帮我订下午两点的电影票，顺路买杯冰美式”，几秒内选座、比价、下单全部完成——智能体已经从“出主意的参谋”变成“能花钱的助手”。中国支付清算协会近期出手规范，官媒关注的是怎么给用户的钱上锁，口径是规范而不是叫停。", "biz": "微信支付 · 智能体场景下的用户确认与风控机制，可做“我们怎么给用户上锁”的技术向沟通，是已有能力不是新造概念。"}, {"id": "88ffc57868e4", "title": "“葫芦娃爷爷”的秋天", "urls": ["https://www.baidu.com/s?wd=%E2%80%9C%E8%91%AB%E8%8A%A6%E5%A8%83%E7%88%B7%E7%88%B7%E2%80%9D%E7%9A%84%E7%A7%8B%E5%A4%A9"], "sources": ["百度热搜"], "source_count": 1, "on_hotlist": true, "official": false, "official_tier": "", "heat": 5051251, "best_rank": 31, "topic_tags": [], "person_hits": ["身份:爷爷", "事迹:走红", "人名:意外入镜"], "is_person": true, "media": "新京报网", "url": "https://www.sogou.com/link?url=hedJjaC291PDlKZwXTBz-bT1ehzWEguoqijgiLPajFpGObYZUkygUmfQ3jawCr9GNqEsBdGrtsw.", "reports": [{"media": "新京报网", "title": "“葫芦娃爷爷”的秋天—新京报", "url": "https://www.sogou.com/link?url=hedJjaC291PDlKZwXTBz-bT1ehzWEguoqijgiLPajFpGObYZUkygUmfQ3jawCr9GNqEsBdGrtsw.", "snippet": "color: #205aef; 葫芦娃爷爷 的秋天 新京报 75岁的陈金敖没有想过，这个 秋天 会成为他人生中最热闹的一段日子。 今年3月，他在... 爷爷 葫芦娃 ”。 此后一个多月里，陈金敖家挂满葫芦的阳台成为绍兴书圣故里的热... 新京报网"}, {"media": "哔哩哔哩", "title": "【葫芦娃】爷爷对孩子们的爱护与情谊是第一部里感动我至深的一个点...", "url": "https://www.sogou.com/link?url=hedJjaC291ObqPUCEo1zMuraEuczo-4WCU_PNz9JM0uwjfrHKRbJR3DbM-fo9rOb", "snippet": "color: #205aef; 葫芦娃 爷爷 对孩子们的爱护与情谊 是第一部里感动我至深的一个点... 葫芦娃 爷爷 一个一个送”，【 葫芦娃 】当金蛇青蛇姐妹俩配上哪吒传奇主题曲，当 葫芦娃 配上《猴哥》BGM，凭着一个锦囊乾坤袋就制服了六个 葫芦娃"}, {"media": "哔哩哔哩", "title": "这剧情属实是想不到呀,葫芦娃的爷爷也是左右为难_剧情", "url": "https://www.sogou.com/link?url=hedJjaC291ObqPUCEo1zMuraEuczo-4WCU_PNz9JM0s5kI4V8JarTWDDiIruATqh", "snippet": "color: #205aef; 这剧情属实是想不到呀, 葫芦娃 爷爷 也是左右为难_剧情 简介：我滴个神啊；已有6851名玩家向您推荐本视频，点击前往哔哩哔哩bilibili一起观看；更多实用攻略教学，爆笑沙雕集锦，你所不知道的游戏知识，热... 哔哩哔哩 https://www.bilibili.com/v... 2023-03-27"}, {"media": "爱奇艺", "title": "葫芦娃爷爷-爱奇艺", "url": "https://www.sogou.com/link?url=hedJjaC291PJKaY1ZBCq45jwJMGPsBnJKUSG4DIdHCCi39mr1ACsqw..", "snippet": "color: #205aef; 葫芦娃爷爷 -爱奇艺 年份： 2018 [天天新衣999] 葫芦娃爷爷 。精彩内容，就在爱奇艺立即看。 视频名称 葫芦娃爷爷 所属频道 少儿 观看方式"}, {"media": "微信公众号", "title": "“葫芦娃爷爷”的秋天", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447613&amp;ver=7013&amp;signature=zq4gAPVhGcwkbmPJHcmtnyhkGTnRH3migHZ6esxjugcoaECX--2LloQY4JULw8tM3KxqSanGIfIx5JtUySJIwZa11vw4C-BM83b91*ttGkiGQc8Vs3FCOqzhAoYvxWNk&amp;new=1", "snippet": "李立军75岁的陈金敖没有想过,这个 秋天 会成为他人生中最热闹的一段日子.今年3月,他在菜市场买了3株 葫芦 苗,在阳台上搭起棚架....“ 爷爷 葫芦娃 ”.此后一个多月里,陈金敖家挂满 葫芦的 阳台成为绍兴书圣故里的热门打卡地,直到现在他也不完全明白自己为什么走红,但突然的流量和热闹的的确确敲开了他的心门.... 公众号 http://mp.weixin"}], "summary_raw": "color: #205aef; 葫芦娃爷爷 的秋天 新京报 75岁的陈金敖没有想过，这个 秋天 会成为他人生中最热闹的一段日子。 今年3月，他在... 爷爷 葫芦娃 ”。 此后一个多月里，陈金敖家挂满葫芦的阳台成为绍兴书圣故里的热... 新京报网", "priority": "P1", "score": 68, "topic": "凡人微光 · 素人走红", "opportunity": "人物鲜活、画面感强、亲切无争议，是“被网友自发喜欢上的普通人”的典型，比刻意策划的内容更有生命力。", "tencent_angle": "可作为凡人微光系列的选题原型，腾讯做传播平台与记录者。", "risk": "需先核实人物身份与背景，确认不是地方文旅营销或 MCN 包装——若是包装则价值归零。", "action": "先搜人物背景与出圈原因，确认真实性与当事人意愿。", "window": "热度在榜，48 小时内", "summary": "绍兴书圣故里 75 岁的陈金敖，今年 3 月在菜市场买了 3 株葫芦苗，在阳台搭起棚架。一个多月后，挂满葫芦的阳台成了游客打卡点，孩子们叫他“葫芦娃爷爷”。他自己也说不清为什么就红了，只说这个秋天成了人生中最热闹的一段日子。新京报网等媒体跟进，热榜热度 505 万。", "biz": "微信视频号 · 凡人微光系列最理想的选题原型：被网友自发喜欢上的普通人，腾讯做记录者与传播平台。"}, {"id": "e39d8bb3d663", "title": "铁路部门优化老年人购票优惠措施", "urls": ["http://society.people.com.cn/n1/2026/1003/c1008-40809134.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": ["elder_accessibility"], "person_hits": [], "is_person": false, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1003/c1008-40809134.html", "reports": [{"media": "人民网社会", "title": "铁路部门优化老年人购票优惠措施", "url": "http://society.people.com.cn/n1/2026/1003/c1008-40809134.html"}], "summary_raw": "新华社北京10月3日电（记者樊曦、王优玲）记者3日从中国国家铁路集团有限公司获悉，继今年5至6月实行老年人淡季周中购票优惠措施后，国铁集团进一步优化这一惠民举措，年满60周岁及以上老年人购买2026年10月18日（含）至12月30日（含）标注“敬”字车次的火车票将享受“折上折”票价优惠，进一步扩大优惠时间范围，不再限定周中时段，相关优惠车票将于10月4日起陆续发售。 国铁集团客运中心相关负责人介绍", "priority": "P1", "score": 68, "topic": "适老化", "opportunity": "适老化是长期政策友好议题，这条是可挂靠的具体进展，不需要等节点。", "tencent_angle": "微信长辈模式、关怀版、字号与语音辅助等已有能力，角色是工具提供方，讲“让老年人真的用得上”的具体改造。", "risk": "主体是铁路部门，腾讯只能做伴随式发声，严禁“我们帮铁路解决了”这类抢叙事表述。", "action": "先确认是否有真实数据或案例可支撑（如长辈模式使用规模），有则做，没有就只做议题储备。", "window": "长期议题，不急", "summary": "国铁集团消息：继今年 5—6 月试行老年人淡季周中购票优惠后，进一步优化这一惠民举措——年满 60 周岁及以上的老人，购买 2026 年 10 月 18 日至 12 月 30 日期间标注“敬”字车次的火车票可享优惠。适老化是长期政策友好议题，这条是能挂靠的具体进展，不需要等节点。", "biz": "微信 · 长辈模式、关怀版、字号与语音辅助等已有能力，讲“让老年人真的用得上”的具体改造，不抢铁路的叙事。"}, {"id": "182130a91f2f", "title": "莫氏鸡煲莫叔投入600万扩大规模", "urls": ["https://www.baidu.com/s?wd=%E8%8E%AB%E6%B0%8F%E9%B8%A1%E7%85%B2%E8%8E%AB%E5%8F%94%E6%8A%95%E5%85%A5600%E4%B8%87%E6%89%A9%E5%A4%A7%E8%A7%84%E6%A8%A1"], "sources": ["百度热搜"], "source_count": 1, "on_hotlist": true, "official": false, "official_tier": "", "heat": 3694595, "best_rank": 45, "topic_tags": ["rural_digital"], "person_hits": ["身份:店主", "事迹:爆火", "人名:广东顺德"], "is_person": true, "media": "南方日报", "url": "https://www.sogou.com/link?url=hedJjaC291P_6If5ZRrEoze1DoGi43lt--vPV2sjUckKny7e8OwQS_hEjq0vem9E", "reports": [{"media": "南方日报", "title": "爆火五个月后,莫氏鸡煲开分店计划搁置,老莫又投入600万元办养鸡...", "url": "https://www.sogou.com/link?url=hedJjaC291P_6If5ZRrEoze1DoGi43lt--vPV2sjUckKny7e8OwQS_hEjq0vem9E", "snippet": "color: #205aef; 爆火五个月后, 莫氏鸡煲 开分店计划搁置,老莫又 投入600万 元办养鸡... 他现在投资了两个养鸡场，建立了合作社， 投入 600万 扩大规模 。其中300万 是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔"}, {"media": "腾讯新闻", "title": "...他表示,不仅店面改造升级,还投入约600万元扩大规模养鸡,背上...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QUclHyMizI-82YpP5eeJ1Ws", "snippet": "color: #205aef; ...他表示,不仅店面改造升级,还 投入 600万 扩大规模 养鸡,背上... 莫氏鸡煲 ”爆火半年之后回访 莫叔 ，他表示，不仅店面改造升级，还 投入 600万 扩大规模"}, {"media": "映象网", "title": "莫氏鸡煲为养鸡暂缓开店投入约600万养鸡搞好品质", "url": "https://www.sogou.com/link?url=6IqLFeTuIyhpMmUVc94xB2BT9ZjTkRhfNRmj4bgxClLKpDbmXM8QSyy4ZeLROBAWvGE_febHK7s.", "snippet": "color: #205aef; 莫氏鸡煲 为养鸡暂缓开店 投入 600万 养鸡搞好品质 热点推荐 不排队、不打卡！年轻人为啥爱上缝纫机课 “奔县深度游”成了新时尚！宝藏小城为何“藏”不住了 微胖可能是保命的本钱 研究发现：太瘦的人，反而更危险 国庆长... 映象网"}, {"media": "新快网", "title": "莫氏鸡煲深圳分店计划泡汤,莫叔平静回应：为了养鸡场,儿女都已...", "url": "https://www.sogou.com/link?url=hedJjaC291OUlpdsToswgDeQh9RPnUSuT-6fs1jIlLOURPRknziHsjceoMwG1IuZ", "snippet": "color: #205aef; 莫氏鸡煲 深圳分店计划泡汤, 莫叔 平静回应：为了养鸡场,儿女都已... 投入 600万 元来 扩大规模 。其中300万元是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔 称，要先保证好食材品质，天气冷了，吃鸡的人按照常理... 新快网"}, {"media": "微信公众号", "title": "爆火5个月,莫氏鸡煲老板砸600万自建养鸡场:门店再多,品质不...", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447622&amp;ver=7013&amp;signature=YVUNzPFbwew2uDJjDb2UaDvgBYUM*mRzlEZAYMuqxdJ7Zl9uLQH5S9auMYdlsPZ*t3dZHy6yiKJg059iI9P7f3fjPiT0kSWEWXgyWA0atFiI*k3YvxV0NL8deZ2nWtxu&amp;new=1", "snippet": "老板砸 600万 自建养鸡场:门店再多,品质不... 为守住鸡肉品质, 莫叔 前后 投入600万 ,建起两座养鸡场,成立合作社.这笔资金一半来自贷款,一半是亲友拼凑而来.也正是这个决定,让他暂缓了深圳开分店的计划.他还拿出20万翻新厨房,打造全透明操作间.从杀鸡、斩 到分装,全程流水线作业.... 公众号 http://mp.weixin.qq.com/c."}], "summary_raw": "color: #205aef; 爆火五个月后, 莫氏鸡煲 开分店计划搁置,老莫又 投入600万 元办养鸡... 他现在投资了两个养鸡场，建立了合作社， 投入 600万 扩大规模 。其中300万 是贷款，另外300万元是亲戚东拼西凑而来，因此深圳开店的计划暂缓。 莫叔", "priority": "P1", "score": 66, "topic": "凡人微光 · 小微商家", "opportunity": "小店因口碑爆火后投入 600 万扩大规模，是“被流量选中后踏实做事”的正向样本，比单纯走红更有故事纵深。", "tencent_angle": "小微商家数字化经营是腾讯能自然接入的方向——收款、点单、会员、供应链。能力只做背景，人物故事才是主线。", "risk": "接入点偏商业，做成广告就废了；不能让腾讯看起来在借他卖货。", "action": "核实莫叔是否已有平台合作方（若有竞品绑定则放弃），再判断是否接触。", "window": "热度在榜，48 小时内", "summary": "佛山顺德莫氏鸡煲今年 4 月因口碑爆火，排队要等“候鸡亭”。为守住鸡肉品质，莫叔前后投入 600 万建起两座养鸡场、成立合作社，这笔钱一半来自贷款、一半是亲友拼凑；还拿出 20 万改造全透明厨房，并暂缓了深圳开分店的计划。南方日报的报道称，如今客流已明显回落，这个秋天他面对的是爆火之后的日子。", "biz": "微信支付 / 小程序 · 小微商家数字化经营（收款、点单、会员、供应链），能力只做背景，人物故事才是主线。"}, {"id": "61cfe8d487e6", "title": "国庆假期科技赋能假日文旅新体验（组图）", "urls": ["http://www.news.cn/tech/20261008/0f4fdc197ff2442a88e9db79ad587919/c.html"], "sources": ["新华网科技"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": ["ai_public_good"], "person_hits": [], "is_person": false, "media": "新华网科技", "url": "http://www.news.cn/tech/20261008/0f4fdc197ff2442a88e9db79ad587919/c.html", "reports": [{"media": "新华网科技", "title": "国庆假期科技赋能假日文旅新体验（组图）", "url": "http://www.news.cn/tech/20261008/0f4fdc197ff2442a88e9db79ad587919/c.html"}], "summary_raw": "&emsp;&emsp;10月6日，在贵州省毕节市科技馆里，小朋友和机器人进行互动。 &emsp;&emsp;国庆假期，全国多地围绕科技亮点打造文旅消费新场景。外骨骼助力登山、AI眼镜智能导览、机器人互动……一批前沿科技为人们的假期生活带来新体验。 &emsp;&emsp;10月6日，小朋友在贵州省毕节市科技馆佩戴VR眼镜进行科普体验。 &emsp;&emsp;国庆假期，全国多地围绕科技亮点打造文", "priority": "P2", "score": 52, "topic": "AI普惠 · 文旅", "opportunity": "科技赋能假日文旅，软性正面题材，适合做轻量内容。", "tencent_angle": "文旅场景的小程序/地图/导览能力，伴随式出现即可。", "risk": "组图类内容信息量低，做不出深度。", "action": "留在议题池，等有具体项目时再用。", "window": "节日已过，窗口关闭", "summary": "新华网 10 月 8 日组图。国庆假期全国多地围绕科技亮点打造文旅消费新场景：贵州毕节科技馆里小朋友和机器人互动，景区里出现外骨骼助力登山、AI 眼镜智能导览等产品。题材软性正面，但组图类信息量偏浅。", "biz": "腾讯地图 / 小程序 · 景区导览与文旅数字化可对位，伴随式出现即可，做不出深度。"}, {"id": "eb17800c774a", "title": "优质医疗服务来到家门口", "urls": ["http://www.news.cn/tech/20261008/a658132da06f4373864a2d891a0a64cd/c.html"], "sources": ["新华网科技"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "新华网科技", "url": "http://www.news.cn/tech/20261008/a658132da06f4373864a2d891a0a64cd/c.html", "reports": [{"media": "新华网科技", "title": "优质医疗服务来到家门口", "url": "http://www.news.cn/tech/20261008/a658132da06f4373864a2d891a0a64cd/c.html"}], "summary_raw": "&emsp;&emsp;“线上问诊、掌上缴费”“家门口就能挂专家号”“社区医院做检查，三甲医院专家就能给出云诊断”……点点滴滴的民生变化，成为优质医疗服务更加可感可及的真实写照。 &emsp;&emsp;党的十八大以来，党中央把保障人民健康放在优先发展的战略位置，将健康中国上升为国家战略，系统推进医药卫生体制改革，持续提升医疗服务质量与可及性。 &emsp;&emsp;浙江省金华市磐安县居民王良近", "priority": "P2", "score": 50, "topic": "AI普惠 · 医疗", "opportunity": "医疗资源下沉到基层，是政策长期鼓励方向。", "tencent_angle": "腾讯健康的基层医疗 AI 能力可对位，角色是工具提供方。", "risk": "医疗表述受严格监管，任何疗效暗示都不可以。", "action": "储备，需时再评估。", "window": "长期议题", "summary": "新华网 10 月 8 日报道。线上问诊、掌上缴费、家门口就能挂上专家号、社区医院做检查三甲专家给云诊断——报道把这些点滴变化称作优质医疗服务“可感可及”的真实写照，背景是健康中国战略推进下的医疗资源下沉。", "biz": "腾讯健康 / 腾讯医典 · 基层医疗 AI 与健康科普可对位；医疗表述受严格监管，不能有任何疗效暗示。"}, {"id": "58573d4caa01", "title": "用光打开大脑的开关", "urls": ["http://scitech.people.com.cn/n1/2026/1006/c1007-40809876.html"], "sources": ["人民网科技"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "人民网科技", "url": "http://scitech.people.com.cn/n1/2026/1006/c1007-40809876.html", "reports": [{"media": "人民网科技", "title": "用光打开大脑的开关", "url": "http://scitech.people.com.cn/n1/2026/1006/c1007-40809876.html"}], "summary_raw": "大脑如何控制感觉、行为和身体功能，长期以来一直是个谜。20世纪，研究人员开始探究大脑的不同功能分别由哪些区域负责，但受方法所限，无法证明其中的因果关系。他们心中的大脑图像，就像一张布满问号的素描线稿。 如今，这一切正在发生改变。北京时间10月5日，瑞典卡罗琳医学院宣布，将2026年诺贝尔生理学或医学奖授予美国科学家卡尔·戴塞罗思、德国科学家彼得·黑格曼和格奥尔格·内格尔，以表彰他们在光门控离子通道", "priority": "P2", "score": 46, "topic": "AI普惠 · 科普", "opportunity": "光遗传学科普，C 端可理解的科技内容，画面感强。", "tencent_angle": "科普内容分发可对位，接入点一般。", "risk": "基础科研离产品远，转化路径不清晰。", "action": "储备。", "window": "长期", "summary": "人民网科技 10 月 6 日科普稿，借 10 月 5 日瑞典卡罗琳医学院宣布 2026 年诺贝尔生理学或医学奖的由头，讲光遗传学如何用光控制神经元、给大脑装上开关。基础科研离产品远，但画面感强，C 端能看懂。", "biz": "腾讯医典 · 脑科学与光遗传学科普可对位，但离产品远、转化路径不清晰，接入点一般。"}, {"id": "348c2f9afb62", "title": "坚守的身影美丽的风景（新时代画卷…", "urls": ["http://society.people.com.cn/n1/2026/1007/c1008-40810010.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": ["事迹:坚守"], "is_person": true, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1007/c1008-40810010.html", "reports": [{"media": "人民网社会", "title": "坚守的身影美丽的风景（新时代画卷…", "url": "http://society.people.com.cn/n1/2026/1007/c1008-40810010.html"}], "summary_raw": "北京地铁12号线田村停车场综合利用项目施工现场，工人正在打磨器件。 建设一线北京地铁12号线田村停车场综合利用项目施工现场，工人正在打磨器件。本报记者雷声摄 江苏南京河海大学五期学生公寓建设项目现场，工人在加固脚手架。 建设一线江苏南京河海大学五期学生公寓建设项目现场，工人在加固脚手架。白光迪张梦摄影报道 河北雄安新区中国人民大学大中小学教育一体化综合改革示范基地项目，工人在绑扎钢筋。 建设一线河", "priority": "P2", "score": 44, "topic": "凡人微光 · 劳动者群像", "opportunity": "节日坚守岗位的劳动者群像，情绪正向，但缺少单个人物主线。", "tencent_angle": "可做群像式轻量内容，腾讯作为记录者。", "risk": "群像容易流于空泛，感染力弱于单个人物。", "action": "若有具体人物线索可升级，否则不做。", "window": "节后已过峰值", "summary": "人民网社会 10 月 7 日组图，拍的是国庆假期坚守岗位的建设者群像：北京地铁 12 号线田村停车场综合利用项目工地上，工人在打磨器件；江苏南京河海大学五期学生公寓项目现场，工人在加固脚手架。情绪正向，但缺少单个人物主线。", "biz": "微信视频号 · 群像式轻量内容可做传播载体；但感染力弱于单个人物，若挖到具体人物线索可升级。"}, {"id": "9b34e196343c", "title": "“外面的风再大，屋里也是暖的”", "urls": ["http://society.people.com.cn/n1/2026/1005/c1008-40809662.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1005/c1008-40809662.html", "reports": [{"media": "人民网社会", "title": "“外面的风再大，屋里也是暖的”", "url": "http://society.people.com.cn/n1/2026/1005/c1008-40809662.html"}], "summary_raw": "浙江玉环坎门街道的入海口，石头筑起的防浪堤上，还留着海浪冲刷过的痕迹。 “‘巴威’来的那一夜，街上整排树都倒了。15级风裹着十几米高的浪头撞翻海堤，打在窗户上就跟机关枪扫射一样。”坎门街道东沙社区居民潘家华回忆，上一次台风正面登陆玉环，还是在2005年。当地群众二十余年没有经历过这样的风浪，超出所有人预判。 不久前，浙江经历了一场气象考验。48天内，台风“巴威”“白海豚”“沙德尔”接连在玉环登陆，", "priority": "P2", "score": 42, "topic": "凡人微光", "opportunity": "标题是引语，很可能是基层或民生人物稿，有温度。", "tencent_angle": "接入点待确认，取决于具体内容。", "risk": "标题信息不足，无法判断是否有人物主线。", "action": "打开原文确认是不是人物故事，是则升级。", "window": "10-05 发布，尚新鲜", "summary": "人民网社会 10 月 5 日的人物稿，标题是文中的一句引语。浙江玉环坎门街道东沙社区居民潘家华回忆“巴威”台风那一夜：街上整排树都倒了，15 级风裹着十几米高的浪头撞翻海堤，打在窗户上像机关枪扫射——上一次台风正面登陆玉环还是 2005 年。讲的是沿海社区怎么守家。", "biz": "腾讯地图 / 微信 · 基层应急与社区互助议题可对位；需先确认有没有具体人物主线，否则价值有限。"}, {"id": "36f5cd3f9299", "title": "文旅局长铺床后续：县政府写信感谢学生", "urls": ["https://www.toutiao.com/trending/7694087379316903450/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%225%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227694087379316903450%22%2C%22hot_board_impr_id%22%3A%22202610081429347B8C53835880A90C6D84%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E6%96%87%E6%97%85%E5%B1%80%E9%95%BF%E9%93%BA%E5%BA%8A%E5%90%8E%E7%BB%AD%EF%BC%9A%E5%8E%BF%E6%94%BF%E5%BA%9C%E5%86%99%E4%BF%A1%E6%84%9F%E8%B0%A2%E5%AD%A6%E7%94%9F%22%7D&rank=&style_id=40132&topic_id=7694087379316903450"], "sources": ["头条热榜"], "source_count": 1, "on_hotlist": true, "official": false, "official_tier": "", "heat": 248094, "best_rank": 45, "topic_tags": [], "person_hits": ["身份:学生"], "is_person": true, "media": "澎湃新闻", "url": "https://www.sogou.com/link?url=hedJjaC291MxGeA-SVBACwNdbrwv1ozqnY8kqmjk2QVYEjW4L09UpAKGDPdI649kGGgkGxmia-w.", "reports": [{"media": "澎湃新闻", "title": "10万人涌入5万人口的青海祁连县,文旅局长给游客铺床_直击现场_澎...", "url": "https://www.sogou.com/link?url=hedJjaC291MxGeA-SVBACwNdbrwv1ozqnY8kqmjk2QVYEjW4L09UpAKGDPdI649kGGgkGxmia-w.", "snippet": "color: #205aef; 10万人涌入5万人口的青海祁连县, 文旅局长 给游客 铺床 _直击现场_澎... 文旅局长 给游客 铺床 3日的一段网络视频中，祁连县文体旅游广电局党组书记、局长冯玲玲在一 学生 宿舍给游客铺被褥，搬行李。 4日下午，冯玲玲接受极目新闻记者采访时表..."}, {"media": "腾讯新闻", "title": "祁连县协调学生宿舍解决游客住宿,文旅局长回应争议!县政府写信...", "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0llZB7Cb1r7QVLjwEOb7MRImYpP5eeJ1Ws", "snippet": "color: #205aef; 祁连 协调 学生 宿舍解决游客住宿, 文旅局长 回应争议! 县政府写信 ... 祁连县协调学生宿舍解决游客住宿，文旅局长回应争议！ 县政府写信感谢学生 ，会排查物品丢失情况 “10万游客涌进5万人的县城”“"}, {"media": "搜狐网", "title": "“10万游客涌进5万人的县城”后续:县政府写信感谢学生,给学生发...", "url": "https://www.sogou.com/link?url=hedJjaC291Ok-E9WTygIKll2MrIoS4vqa1KY1ipITJvroat_jXvrdKIwznClwsBj", "snippet": "color: #205aef; “10万游客涌进5万人的县城” 后续:县政府写信感谢学生 ,给学生发... “10万游客涌进5万人的县城”“ 文旅局长铺床 ”……近日，青海省祁连县接连火上热搜。 对此，祁连县紧急协调 学生 宿舍，解决住宿难题。尽管入住游客好评不... 搜狐网 https://www.sohu.com/a... 16小时前"}, {"media": "今日头条", "title": "文旅局让游客住学校后续-今日头条", "url": "https://www.sogou.com/link?url=hedJjaC291PD0T3DYzJqFDoBhFbePHveP89JZJyfrfSAvrePUbJ0ykxNcaR5ZMRs0rspllwLGPo.", "snippet": "color: #205aef; 文旅局 让游客住学校 后续 -今日头条 资讯 游客住到 文旅局长 家，不妨订好住宿再出发 新京报快评 “说走就走”的旅行，体... 您在查找 文旅局"}, {"media": "微信公众号", "title": "“10万游客涌进5万人的县城,文旅局长铺床”后续:县政府写...", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447637&amp;ver=7013&amp;signature=bxbAXwjqhUY81sk*dBAyZD5LsjBwLr8MYTX99ByvKyHOXYVnr8tOG-PC7u-vXOH-3G7aviseVOS9nj1uFY0ou1JCsu514EWXisYH9rPvg*CYgYwLz76kGxDm9k9rIPia&amp;new=1", "snippet": "后续:县政府写 ... “10万游客涌进5万人的县城”“ 文旅局长铺床 ”……近日,青海省祁连 接连火上热搜.对此,祁连 紧急协调 学生 宿舍,解决住宿难题.尽管入住游客好评不断,但网上还是有不同声音,比如是否侵犯 学生 相关权益.10月8日,祁连 文体旅游广电局局长冯玲玲等人,在《人民日报》的《一座高原小城的暖心安置》一文中做了回应.... 公众号 htt"}], "summary_raw": "color: #205aef; 10万人涌入5万人口的青海祁连县, 文旅局长 给游客 铺床 _直击现场_澎... 文旅局长 给游客 铺床 3日的一段网络视频中，祁连县文体旅游广电局党组书记、局长冯玲玲在一 学生 宿舍给游客铺被褥，搬行李。 4日下午，冯玲玲接受极目新闻记者采访时表...", "priority": "P2", "score": 40, "topic": "文旅 · 基层干部", "opportunity": "官民良性互动的少见样本，双向善意。", "tencent_angle": "城市形象与文旅服务，可做轻量正向内容。", "risk": "涉基层政府，且网上有“是否侵犯学生权益”的不同声音。腾讯只能做背景或平台角色，不点评政府行为，也绝不碰争议那一侧；热度已回落。", "action": "观察，热度已低，不必急着做。", "window": "热度回落中", "summary": "青海祁连“10 万游客涌进 5 万人的县城”，当地紧急协调学生宿舍安置游客，文旅局长冯玲玲给学生铺床，因此走红。10 月 8 日，祁连文体旅游广电局局长等人在人民日报刊文感谢学生。同时网上也有“是否侵犯学生权益”的不同声音，热度已回落至 24 万。", "biz": "腾讯地图 / 小程序 · 文旅服务与城市形象议题可对位，只做背景或平台，绝不碰争议那一侧。"}, {"id": "59b51f5a5884", "title": "接得住流量留得下人心", "urls": ["http://society.people.com.cn/n1/2026/1008/c1008-40810309.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1008/c1008-40810309.html", "reports": [{"media": "人民网社会", "title": "接得住流量留得下人心", "url": "http://society.people.com.cn/n1/2026/1008/c1008-40810309.html"}], "summary_raw": "陕西西安，一名游客正在向警察问询。西安市公安局供图 位于湖北宜昌刘家大堰社区的中建三局智慧城市运营中心，工作人员在实时了解社区运营情况。 位于湖北宜昌刘家大堰社区的中建三局智慧城市运营中心，工作人员在实时了解社区运营情况。严晓冬摄 国庆假期，山东青岛崂山区环卫人机协同冲洗道路。青岛市崂山区城市管理局供图 今年国庆假期，累计全社会跨区域人员流动量预计21.44亿人次，日均3.06亿人次。巨大的客流量", "priority": "P2", "score": 38, "topic": "文旅 · 城市流量", "opportunity": "讨论城市如何接住流量，与文旅局长出圈事件可呼应。", "tencent_angle": "文旅数字化可对位，接入点一般。", "risk": "评论类内容，缺少人物与事件。", "action": "作为文旅议题储备。", "window": "节后窗口收窄", "summary": "人民网社会 10 月 8 日评论，讨论城市该怎么“接得住流量、留得下人心”，配图涉及西安游客向警察问询、湖北宜昌刘家大堰社区智慧城市运营中心、山东青岛崂山区环卫等场景。评论类内容，没有具体人物和事件。", "biz": "腾讯云 / 腾讯地图 · 城市数字化与文旅服务可对位，但缺人物缺事件，接入点一般。"}, {"id": "ccc69ee7376c", "title": "第七届全国养老金发展论坛观察", "urls": ["https://www.toutiao.com/trending/7694132878461370411/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%220%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227694132878461370411%22%2C%22hot_board_impr_id%22%3A%22202610081429347B8C53835880A90C6D84%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E7%AC%AC%E4%B8%83%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%85%BB%E8%80%81%E9%87%91%E5%8F%91%E5%B1%95%E8%AE%BA%E5%9D%9B%E8%A7%82%E5%AF%9F%22%7D&rank=&style_id=40132&topic_id=7694132878461370411"], "sources": ["头条热榜"], "source_count": 1, "on_hotlist": true, "official": false, "official_tier": "", "heat": 823703, "best_rank": 33, "topic_tags": ["elder_accessibility"], "person_hits": [], "is_person": false, "media": "中国农网", "url": "https://www.sogou.com/link?url=hedJjaC291PeUvWSzIIMb8ZmoRA401mj5IvPw0c8zDCH8F7prlXGaMTGo-Etctg6tsCnpVGpPpA.", "reports": [{"media": "中国农网", "title": "扎实推动养老保险制度更加优化更可持续——第七届全国养老金发展论...", "url": "https://www.sogou.com/link?url=hedJjaC291PeUvWSzIIMb8ZmoRA401mj5IvPw0c8zDCH8F7prlXGaMTGo-Etctg6tsCnpVGpPpA.", "snippet": "color: #205aef; 扎实推动 养老 保险制度更加优化更可持续—— 第七届全国养老金发展论 ... 聚焦“扎实推动我国养老保险制度更加优化更可持续”主题， 第七届全国养老金发展论坛 近日在北京举行。此次论坛由中国社会保障学会主办、中国社会保障学会... 中国农网 https://www.farmer.com.cn/2... 16小时前"}, {"media": "微信公众号", "title": "补低扶弱,才是养老金的底色——第七届全国养老金发展论坛观察", "url": "http://mp.weixin.qq.com/s?src=11&amp;timestamp=1791447628&amp;ver=7013&amp;signature=YucJrjju46S401nmjG26FOwzJ1se74Tb2lKa9vTsHhOs4eV0wNsC9FDeZmJwO7lOshafbkI*oZPHW5QRgOCky5d9Pnw93kkTLeY6Rh0UcXSIKb5DExr3yobZtdsNijq5&amp;new=1", "snippet": "聚焦“扎实推动我国 养老 保险制度更加优化更可持续”主题, 第七届全国养老金发展论坛 近日在北京举行.此次论坛由中国社会保障学会主办、中国社会保障学会养老金分会承办、中国人寿养老保险股份有限公司协办.“养老保险制度优化关乎民生福祉、社会公平和代际责任.... 公众号 http://mp.weixin.qq.com/c... 16小时前"}], "summary_raw": "color: #205aef; 扎实推动 养老 保险制度更加优化更可持续—— 第七届全国养老金发展论 ... 聚焦“扎实推动我国养老保险制度更加优化更可持续”主题， 第七届全国养老金发展论坛 近日在北京举行。此次论坛由中国社会保障学会主办、中国社会保障学会... 中国农网 https://www.farmer.com.cn/2... 16小时前", "priority": "P2", "score": 34, "topic": "适老化 · 养老", "opportunity": "养老保障是长期政策议题，可与适老化方向呼应。", "tencent_angle": "接入点弱，偏金融政策层面。", "risk": "涉养老金政策，敏感度高，不宜轻易发声。", "action": "只做议题跟踪，不主动跟进。", "window": "长期", "summary": "第七届全国养老金发展论坛近日在北京举行，由中国社会保障学会主办、养老金分会承办、中国人寿养老险协办，主题聚焦“扎实推动我国养老保险制度更加优化更可持续”。论坛内容偏政策与制度层面。", "biz": "银发科技 · 养老议题方向可对位，但涉养老金政策敏感度高，不宜主动发声，仅作长期储备。"}, {"id": "62eac4268bdc", "title": "海南加速车路云一体化全域布局", "urls": ["http://society.people.com.cn/n1/2026/1008/c1008-40810548.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1008/c1008-40810548.html", "reports": [{"media": "人民网社会", "title": "海南加速车路云一体化全域布局", "url": "http://society.people.com.cn/n1/2026/1008/c1008-40810548.html"}], "summary_raw": "本报海口10月7日电记者王晓樱从海南相关部门了解到，海南正推动汽车产业全面智能化升级，深耕“车路云一体化”创新应用，探索成为中国省级全域智能网联技术落地的理想试验场。 海南是我国首个提出2030年禁售燃油车目标的省份。作为智能网联汽车产业重要发展方向，车路云一体化依托车载终端、路侧设备与云端平台协同联动，支撑车辆自动驾驶、车路协同与智慧交通调度，已成为全球汽车产业竞争的核心赛道。 凭借海岛全域封闭", "priority": "P2", "score": 30, "topic": "AI普惠 · 智能网联", "opportunity": "车路云一体化是地方数字化建设进展。", "tencent_angle": "腾讯云/车联网可对位，但主体是地方政府。", "risk": "地方政绩类报道，腾讯接入生硬。", "action": "不做跟进。", "window": "长期", "summary": "人民网 10 月 8 日报道：海南正推动汽车产业智能化升级，深耕“车路云一体化”创新应用，探索成为省级全域智能网联技术落地的试验场；该省是我国首个提出 2030 年禁售燃油车目标的省份。车路云依托车载终端、路侧设备与云端平台协同。属地方政绩类报道。", "biz": "腾讯云 · 车路云依托云端协同能力方向可对位，但主体是地方政府，腾讯接入生硬，不建议跟进。"}, {"id": "adbfa6072811", "title": "百日千万招聘专项行动推出4个专场", "urls": ["http://society.people.com.cn/n1/2026/1006/c1008-40809747.html"], "sources": ["人民网社会"], "source_count": 1, "on_hotlist": false, "official": true, "official_tier": "央媒", "heat": 0, "best_rank": null, "topic_tags": [], "person_hits": [], "is_person": false, "media": "人民网社会", "url": "http://society.people.com.cn/n1/2026/1006/c1008-40809747.html", "reports": [{"media": "人民网社会", "title": "百日千万招聘专项行动推出4个专场", "url": "http://society.people.com.cn/n1/2026/1006/c1008-40809747.html"}], "summary_raw": "本报北京10月5日电记者邱玥从人力资源社会保障部获悉，10月5日至10日，百日千万招聘专项行动推出航空航天及国防装备、教育培训、文娱、快递行业4个线上招聘专场，由相关人力资源服务机构组织，共2100余家用人单位参与，招聘需求4.7万余人次。 航空航天及国防装备行业专场组织370余家用人单位，提供综合环境试验设计师、智能导航设计师、产品工程师、数字化工程师、研发工程师等岗位，招聘需求1.1万余人次。", "priority": "P2", "score": 28, "topic": "就业", "opportunity": "就业是政策长期关注方向。", "tencent_angle": "招聘平台/技能课程可对位，接入点一般。", "risk": "政策行动类内容，缺少人物。", "action": "储备，等出现具体人物案例。", "window": "长期", "summary": "人社部消息：10 月 5 日至 10 日，百日千万招聘专项行动推出航空航天及国防装备、教育培训、文娱、快递行业 4 个线上招聘专场，由相关人力资源服务机构组织，共 2100 余家用人单位参与，招聘需求 4.7 万余人次。政策行动类，缺少人物。", "biz": "腾讯教育 · 职业技能与就业培训可对位；但缺具体人物主线，接入点一般，等出现具体人物案例再用。"}]};
+(function(){
+  var d = window.RADAR_DATA, app = document.getElementById('app'), h = '';
+
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function heat(v){
+    if(!v) return '';
+    return v>=10000 ? (v/10000).toFixed(0)+'万' : String(v);
+  }
+  function row(k,v,cls){
+    if(!v) return '';
+    return '<div class="row '+(cls||'')+'"><div class="k">'+k+'</div>'+
+           '<div class="v">'+esc(v)+'</div></div>';
+  }
+  function srcLine(c){
+    var media = c.media || (c.sources && c.sources[0]) || '';
+    var link  = c.url || (c.urls && c.urls[0]) || '';
+    var s = '<div class="src">';
+    if(media) s += '<span class="m">'+esc(media)+'</span>';
+    if(link)  s += '<a href="'+esc(link)+'" target="_blank" rel="noopener">查看原文 &#8599;</a>';
+    var others = (c.reports||[]).slice(1,4).map(function(r){return r.media;}).filter(Boolean);
+    if(others.length) s += '<span class="more">相关报道：'+esc(others.join('、'))+'</span>';
+    return s + '</div>';
+  }
+
+  var s = d.stats || {};
+
+  /* ---------- 头部 ---------- */
+  h += '<div class="hero">'+
+       '<h1>传播机会雷达</h1>'+
+       '<div class="desc">每天从全网热榜与官媒科技内容中，筛出腾讯能正向接入、'+
+       '值得对外发声的传播机会，并给出跟进优先级。'+
+       '系统每天自动完成采集、溯源、判读与推送。</div>'+
+       '<div class="date">'+esc(d.date)+' · 生成于 '+esc((d.built_at||'').slice(11,16))+'</div>'+
+       '</div>';
+
+  /* ---------- 漏斗：系统价值最直观的一屏 ---------- */
+  var stages = [
+    ['原始抓取', s.raw||0,        '#b4b2a9'],
+    ['合并候选', s.candidates||0, '#7f77dd'],
+    ['判读入库', s.judged||0,     '#ef9f27'],
+    ['P1 以上',  (s.p0||0)+(s.p1||0), '#e07b39']
+  ];
+  var maxv = Math.max.apply(null, stages.map(function(x){return x[1];})) || 1;
+  h += '<div class="funnel">'+
+       '<div class="fh"><b>今日漏斗</b><span>从 '+esc(s.raw||0)+' 条原始信息到 '+esc(s.judged||0)+' 条可用机会</span></div>';
+  stages.forEach(function(st){
+    var pct = Math.max(8, Math.round(st[1]/maxv*100));
+    h += '<div class="frow"><div class="lab">'+st[0]+'</div>'+
+         '<div class="track"><div class="fill" style="width:'+pct+'%;background:'+st[2]+'">'+
+         esc(st[1])+'</div></div>'+
+         '<div class="num">'+esc(st[1])+'</div></div>';
+  });
+  h += '<div class="fnote">中间 '+esc(s.blocked||0)+' 条被硬过滤丢弃（娱乐八卦、社会负面、时政敏感、竞品主体）。'+
+       '剩下的经判读后只保留真正可跟的——<b>宁可空着，也不灌水</b>。</div></div>';
+
+  /* ---------- 今日出圈人物 ---------- */
+  if(d.people && d.people.length){
+    h += '<div class="sec-h"><span class="bar" style="background:#7f77dd"></span>'+
+         '<span class="t">今日出圈人物</span><span class="c">'+d.people.length+' 人</span></div>';
+    h += '<div class="pgrid">';
+    d.people.forEach(function(p){
+      var initial = esc((p.name||'?').replace(/["“”「」\s]/g,'').slice(0,1));
+      h += '<div class="pcard">'+
+           '<div class="ph"><div class="avatar">'+initial+'</div>'+
+           '<div><div class="nm">'+esc(p.name)+'</div>'+
+           '<div class="tp">'+esc(p.type)+'</div></div>'+
+           '<div class="ht">'+(p.heat?'<b>'+heat(p.heat)+'</b>热度':'')+'</div></div>'+
+           '<div class="ps">'+esc(p.summary||'')+'</div>';
+      h += srcLine(p);
+      h += row('可用在哪', p.usable);
+      h += row('风险', p.risk, 'risk');
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  /* ---------- P0 / P1 完整卡片 ---------- */
+  [['P0','P0 · 立刻跟进','#f09595'],['P1','P1 · 今日内看','#ef9f27']].forEach(function(g){
+    var items = (d.cases||[]).filter(function(c){return c.priority===g[0];});
+    h += '<div class="sec-h"><span class="bar" style="background:'+g[2]+'"></span>'+
+         '<span class="t">'+g[1]+'</span><span class="c">'+items.length+' 条</span></div>';
+    if(!items.length){
+      h += '<div class="empty">'+
+           esc(g[0]==='P0' ? (d.p0_note || '今日无 P0。')
+                           : '今日无 P1 机会。')+'</div>';
+      return;
+    }
+    items.forEach(function(c){
+      h += '<div class="card '+g[0].toLowerCase()+'">';
+      h += '<div class="top"><span class="badge '+g[0]+'">'+g[0]+'</span>'+
+           '<div class="ttl">';
+      var u = (c.urls&&c.urls[0]) ? c.urls[0] : '';
+      h += u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>'
+             : esc(c.title);
+      h += '</div><div class="score">'+(c.score?c.score+' 分':'')+'</div></div>';
+      h += '<div class="meta">';
+      if(c.official) h += '<span class="tag gov">'+esc(c.official_tier||'官媒')+'背书</span>';
+      if(c.on_hotlist) h += '<span class="tag hot">热榜在榜</span>';
+      if(c.topic) h += '<span class="tag">'+esc(c.topic)+'</span>';
+      var hv = heat(c.heat);
+      if(hv) h += '<span>热度 '+esc(hv)+'</span>';
+      h += '</div>';
+      h += srcLine(c);
+      h += row('事件', c.summary || c.summary_raw, 'ev');
+      h += row('腾讯业务', c.biz, 'biz');
+      h += row('机会在哪', c.opportunity);
+      h += row('腾讯接入', c.tencent_angle);
+      h += row('风险', c.risk, 'risk');
+      h += row('建议动作', c.action, 'act');
+      h += row('窗口期', c.window);
+      h += '</div>';
+    });
+  });
+
+  /* ---------- P2 观察池：紧凑列表 ---------- */
+  var p2 = (d.cases||[]).filter(function(c){return c.priority==='P2';});
+  if(p2.length){
+    h += '<div class="sec-h"><span class="bar" style="background:#b4b2a9"></span>'+
+         '<span class="t">P2 · 观察储备</span><span class="c">'+p2.length+' 条</span></div>';
+    h += '<div class="mini">';
+    p2.forEach(function(c){
+      var u = (c.urls&&c.urls[0]) ? c.urls[0] : '';
+      var t = u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>'
+                : esc(c.title);
+      h += '<div class="mrow"><div class="mt">'+t+'</div>'+
+           '<div class="mb">'+esc((c.biz||'').split('·')[0].trim())+'</div>'+
+           '<div class="mm">'+esc(c.media||(c.sources&&c.sources[0])||'')+'</div></div>';
+    });
+    h += '</div>';
+  }
+
+  h += '<div class="foot">'+
+       '判读口径：腾讯做发起方与工具提供方，不抢叙事、不把自己写成英雄。<br>'+
+       '社会贡献必须为正向建设，涉及给官方纠错、挑错的内容一律不纳入。<br>'+
+       '数据来源：微博 / 百度 / 头条热榜，新华网科技、人民网科技·社会、光明网科技。'+
+       '微信公众号无法自动抓取，需手动补充。'+
+       '</div>';
+
+  app.innerHTML = h;
+})();
+</script>
+</body>
+</html>

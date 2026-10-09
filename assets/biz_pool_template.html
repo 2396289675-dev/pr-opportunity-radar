@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>腾讯业务池 · 筛选</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --panel:#ffffff; --bd:#e3e6ec; --bd2:#eef0f4;
+    --tx:#1a1d21; --tx2:#5b6470; --tx3:#8b939f;
+    --acc:#185fa5; --acc-bg:#eaf2fb; --ok:#1a7f4b; --ok-bg:#e8f5ee;
+    --warn:#9a6400; --warn-bg:#fdf3e2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);
+       font:14px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+  h1{font-size:22px;margin:0 0 6px;letter-spacing:.3px}
+  .sub{color:var(--tx2);font-size:13px;margin-bottom:4px}
+  .how{background:var(--acc-bg);border:1px solid #cfE0f3;border-radius:8px;
+       padding:12px 14px;font-size:13px;color:#24506f;margin:16px 0 20px}
+  .how b{color:var(--acc)}
+  .bar{position:sticky;top:0;z-index:5;background:var(--bg);
+       padding:12px 0;border-bottom:1px solid var(--bd);
+       display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .bar input[type=search]{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--bd);
+       border-radius:7px;font-size:13px;background:#fff;color:var(--tx)}
+  button{font:inherit;font-size:13px;padding:7px 13px;border:1px solid var(--bd);
+       background:#fff;color:var(--tx);border-radius:7px;cursor:pointer}
+  button:hover{border-color:#c6ccd6;background:#fafbfc}
+  button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+  button.pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+  button.pri:hover{opacity:.9;background:var(--acc)}
+  .count{margin-left:auto;color:var(--tx2);font-size:13px}
+  .count b{color:var(--acc);font-size:16px}
+
+  .grp{margin-top:24px}
+  .grp h2{font-size:15px;margin:0 0 3px;display:flex;align-items:center;gap:8px}
+  .grp h2 .n{color:var(--tx3);font-weight:400;font-size:12px}
+  .grp .hint{color:var(--tx3);font-size:12px;margin-bottom:10px}
+  .grp .gbtns{margin-left:auto;display:flex;gap:6px}
+  .grp .gbtns button{padding:4px 10px;font-size:12px}
+
+  .item{background:var(--panel);border:1px solid var(--bd);border-radius:9px;
+        padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+  .item:hover{border-color:#cdd3dc}
+  .item.off{opacity:.5;background:#fbfbfc}
+  .item input[type=checkbox]{width:17px;height:17px;margin-top:4px;flex:none;cursor:pointer;accent-color:var(--acc)}
+  .item .body{flex:1;min-width:0}
+  .item .nm{font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .item .ds{color:var(--tx2);font-size:13px;margin-top:3px}
+  .item .ft{color:var(--tx3);font-size:12px;margin-top:5px}
+  .item .ft b{color:var(--tx2);font-weight:500}
+  .item .nt{margin-top:6px;font-size:12px;color:var(--warn);background:var(--warn-bg);
+       border-radius:5px;padding:5px 9px;display:inline-block}
+  .pill{font-size:11px;padding:1px 7px;border-radius:4px;font-weight:500;
+        background:var(--ok-bg);color:var(--ok);border:1px solid #c6e6d4}
+  .pill.g{background:#f0f1f4;color:var(--tx2);border-color:var(--bd)}
+
+  .addbox{background:var(--panel);border:1px dashed var(--bd);border-radius:9px;
+          padding:14px;margin-top:10px;display:none;gap:8px;flex-wrap:wrap}
+  .addbox.show{display:flex}
+  .addbox input{padding:8px 11px;border:1px solid var(--bd);border-radius:7px;font-size:13px;
+       font-family:inherit;color:var(--tx)}
+  .addbox input.n{min-width:160px;flex:1}
+  .addbox input.d{min-width:220px;flex:2}
+  .myitems{margin-top:8px}
+  .empty{color:var(--tx3);font-size:13px;padding:8px 0}
+
+  .foot{position:fixed;left:0;right:0;bottom:0;background:#fff;
+        border-top:1px solid var(--bd);padding:12px 20px;
+        display:flex;gap:10px;align-items:center;justify-content:center;
+        box-shadow:0 -2px 12px rgba(0,0,0,.05)}
+  .foot .txt{color:var(--tx2);font-size:13px;margin-right:6px}
+  .outbox{position:fixed;left:0;right:0;bottom:54px;background:#fff;border-top:1px solid var(--bd);
+          padding:14px 20px;display:none;box-shadow:0 -4px 16px rgba(0,0,0,.07);z-index:20;
+          max-height:46vh;overflow:auto}
+  .outbox.show{display:block}
+  .outbox .in{max-width:980px;margin:0 auto}
+  .outbox textarea{width:100%;height:120px;font:12px/1.6 ui-monospace,Menlo,Consolas,monospace;
+          border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);
+          background:#fafbfc;resize:vertical}
+  .outbox .btns{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .outbox .tip{font-size:12px;color:var(--tx2);margin-bottom:7px}
+  .outbox .tip b{color:var(--tx)}
+  .saved{font-size:12px;color:var(--ok)}
+  .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);
+         background:#25303d;color:#fff;padding:9px 18px;border-radius:7px;
+         font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>腾讯业务池</h1>
+  <div class="sub">每日判读时，「腾讯业务」这一行只会从你勾选的范围内挑。没勾的不会出现在看板和企微推送里。</div>
+  <div class="how">
+    <b>怎么用：</b>勾掉你不负责、或不想让它在外部传播里出现的业务 → 点底部「导出结果」→ 把下载的
+    <b>tencent_biz_selected.json</b> 告诉我（或直接粘贴内容给我），我写回配置。<br>
+    接不上的事件我会写「接不上」，<b>不会</b>为了凑数硬挂业务。上面没有的业务，用「+ 自己加一条」补。
+  </div>
+
+  <div class="bar">
+    <input type="search" id="q" placeholder="搜索业务名或适用场景，如：适老、乡村、支付">
+    <button id="all">全选</button>
+    <button id="none">清空</button>
+    <button id="rec">只看推荐</button>
+    <span class="count">已选 <b id="cnt">0</b> / <span id="tot">0</span></span>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="grp">
+    <h2>自定义 <span class="n">上面没有的，自己加</span>
+      <span class="gbtns"><button id="addbtn">+ 自己加一条</button></span>
+    </h2>
+    <div class="addbox" id="addbox">
+      <input class="n" id="newName" placeholder="业务名，如：腾讯会议国际版">
+      <input class="d" id="newDesc" placeholder="一句话说明这个业务是什么、适合接什么">
+      <button class="pri" id="newAdd">添加</button>
+      <button id="newCancel">取消</button>
+    </div>
+    <div class="myitems" id="myitems"><div class="empty">暂无自定义业务</div></div>
+  </div>
+</div>
+
+<div class="outbox" id="outbox"><div class="in">
+  <div class="tip"><b>把下面这段直接粘给 WorkBuddy 就行</b>（不用下载文件；若复制也失败，手动全选文本框内容再复制）</div>
+  <textarea id="outText" readonly></textarea>
+  <div class="btns">
+    <button class="pri" id="cpAll">复制这段</button>
+    <button id="dl2">下载 JSON 文件</button>
+    <button id="closeOut">收起</button>
+  </div>
+</div></div>
+
+<div class="foot">
+  <span class="txt" id="saveTip">勾选会自动存到本机，刷新不丢</span>
+  <button class="pri" id="openOut">导出结果</button>
+  <button id="cpBrief">复制一句话结果</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.POOL = __DATA__;
+</script>
+<script>
+(function(){
+  var P = window.POOL;
+  var KEY = 'pr_radar_biz_selection_v1';
+  var state = {};        // id -> bool
+  var initial = {};      // 初始状态，用于生成「关掉了哪些」的一句话结果
+  var custom = [];       // {id,name,desc}
+  var onlyRec = false, kw = '';
+
+  P.items.forEach(function(it){ state[it.id] = !!it.enabled; initial[it.id] = !!it.enabled; });
+  (P.custom_items||[]).forEach(function(c){ custom.push(c); state[c.id]=true; });
+
+  // 恢复上次未导出的勾选：下载和剪贴板都可能被浏览器拦，本地存档是保底
+  var restored = false;
+  try{
+    var rawS = localStorage.getItem(KEY);
+    if(rawS){
+      var s = JSON.parse(rawS);
+      var en = s.enabled || [];
+      Object.keys(state).forEach(function(id){
+        if(id.indexOf('custom_') !== 0) state[id] = en.indexOf(id) >= 0;
+      });
+      (s.custom_items||[]).forEach(function(c){ custom.push(c); state[c.id]=true; });
+      restored = true;
+    }
+  }catch(e){}
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]; }); }
+
+  function match(it){
+    if(onlyRec && !it.recommended) return false;
+    if(!kw) return true;
+    var t = (it.name+' '+it.desc+' '+(it.fit||'')+' '+(it.aliases||[]).join(' ')).toLowerCase();
+    return t.indexOf(kw.toLowerCase()) >= 0;
+  }
+
+  function itemHtml(it, isCustom){
+    var on = state[it.id];
+    var h = '<div class="item'+(on?'':' off')+'" data-id="'+esc(it.id)+'">';
+    h += '<input type="checkbox" '+(on?'checked':'')+'>';
+    h += '<div class="body"><div class="nm">'+esc(it.name);
+    if(it.recommended) h += '<span class="pill">推荐</span>';
+    if(!isCustom && it.enabled===false) h += '<span class="pill g">默认关</span>';
+    h += '</div>';
+    h += '<div class="ds">'+esc(it.desc)+'</div>';
+    if(it.fit) h += '<div class="ft"><b>适合接：</b>'+esc(it.fit)+'</div>';
+    if(it.note) h += '<div class="nt">'+esc(it.note)+'</div>';
+    h += '</div></div>';
+    return h;
+  }
+
+  function render(){
+    var html = '', shown = 0, sel = 0;
+    P.groups.forEach(function(g){
+      if(g.id === 'custom') return;
+      var items = P.items.filter(function(it){ return it.group===g.id && match(it); });
+      if(!items.length) return;
+      shown += items.length;
+      var nOn = items.filter(function(it){ return state[it.id]; }).length;
+      sel += nOn;
+      html += '<div class="grp"><h2>'+esc(g.name)+
+              '<span class="n">'+nOn+' / '+items.length+'</span>'+
+              '<span class="gbtns"><button data-g="'+g.id+'" data-v="1">整组开</button>'+
+              '<button data-g="'+g.id+'" data-v="0">整组关</button></span></h2>';
+      html += '<div class="hint">'+esc(g.hint)+'</div>';
+      items.forEach(function(it){ html += itemHtml(it,false); });
+      html += '</div>';
+    });
+    document.getElementById('list').innerHTML = html ||
+      '<div class="empty">没有匹配的业务，换个词试试</div>';
+
+    // 自定义
+    var mh = '';
+    custom.forEach(function(c){
+      mh += '<div class="item" data-id="'+esc(c.id)+'">'+
+            '<input type="checkbox" checked>'+
+            '<div class="body"><div class="nm">'+esc(c.name)+'<span class="pill">自定义</span></div>'+
+            '<div class="ds">'+esc(c.desc)+'</div></div>'+
+            '<button data-del="'+esc(c.id)+'" style="margin-top:2px">移除</button></div>';
+    });
+    document.getElementById('myitems').innerHTML = mh ||
+      '<div class="empty">暂无自定义业务</div>';
+
+    custom.forEach(function(){ shown++; sel++; });
+    document.getElementById('cnt').textContent = sel;
+    document.getElementById('tot').textContent = shown;
+    save();
+  }
+
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(result())); }catch(e){}
+  }
+
+  document.getElementById('list').addEventListener('change', function(e){
+    if(e.target.type !== 'checkbox') return;
+    var id = e.target.closest('.item').dataset.id;
+    state[id] = e.target.checked;
+    render();
+  });
+  document.getElementById('myitems').addEventListener('change', function(e){
+    if(e.target.type !== 'checkbox') return;
+    var id = e.target.closest('.item').dataset.id;
+    state[id] = e.target.checked;
+    render();
+  });
+  document.getElementById('myitems').addEventListener('click', function(e){
+    var del = e.target.dataset && e.target.dataset.del;
+    if(!del) return;
+    custom = custom.filter(function(c){ return c.id !== del; });
+    delete state[del];
+    render();
+  });
+  document.getElementById('list').addEventListener('click', function(e){
+    var g = e.target.dataset && e.target.dataset.g;
+    if(!g) return;
+    var v = e.target.dataset.v === '1';
+    P.items.forEach(function(it){ if(it.group===g) state[it.id]=v; });
+    render();
+  });
+
+  document.getElementById('q').addEventListener('input', function(e){
+    kw = e.target.value.trim(); render();
+  });
+  document.getElementById('all').onclick = function(){
+    P.items.forEach(function(it){ state[it.id]=true; }); render(); };
+  document.getElementById('none').onclick = function(){
+    P.items.forEach(function(it){ state[it.id]=false; }); render(); };
+  document.getElementById('rec').onclick = function(){
+    onlyRec = !onlyRec; this.classList.toggle('on', onlyRec); render(); };
+
+  document.getElementById('addbtn').onclick = function(){
+    document.getElementById('addbox').classList.add('show');
+    document.getElementById('newName').focus();
+  };
+  document.getElementById('newCancel').onclick = function(){
+    document.getElementById('addbox').classList.remove('show'); };
+  document.getElementById('newAdd').onclick = function(){
+    var n = document.getElementById('newName').value.trim();
+    var d = document.getElementById('newDesc').value.trim();
+    if(!n){ toast('先填业务名'); return; }
+    var id = 'custom_' + Date.now().toString(36);
+    custom.push({id:id, name:n, desc:d||'（自定义，未填说明）', group:'custom',
+                 aliases:[n], enabled:true, recommended:false, fit:'', note:''});
+    state[id] = true;
+    document.getElementById('newName').value='';
+    document.getElementById('newDesc').value='';
+    document.getElementById('addbox').classList.remove('show');
+    render(); toast('已添加：'+n);
+  };
+
+  function result(){
+    var enabled = P.items.filter(function(it){ return state[it.id]; }).map(function(it){ return it.id; });
+    var ci = custom.filter(function(c){ return state[c.id]; })
+      .map(function(c){ return {id:c.id, name:c.name, desc:c.desc,
+                                aliases:[c.name], group:'custom',
+                                enabled:true, recommended:false}; });
+    return {updated: new Date().toISOString().slice(0,10),
+            enabled: enabled, custom_items: ci};
+  }
+
+  function toast(m){
+    var t = document.getElementById('toast');
+    t.textContent = m; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  // 一句话结果：默认全开，所以只需要说「关掉了哪些」，粘给我就能改配置
+  function brief(){
+    var closed = [], opened = [];
+    P.items.forEach(function(it){
+      if(initial[it.id] && !state[it.id]) closed.push(it.name);
+      if(!initial[it.id] && state[it.id]) opened.push(it.name);
+    });
+    var parts = [];
+    if(closed.length) parts.push('关掉 ' + closed.length + ' 条：' + closed.join('、'));
+    if(opened.length) parts.push('额外开启：' + opened.join('、'));
+    if(custom.length) parts.push('自定义新增：' +
+      custom.map(function(c){ return c.name; }).join('、'));
+    if(!parts.length) parts.push('全部保持默认');
+    return '业务池筛选结果 → ' + parts.join('；');
+  }
+
+  function fallbackCopy(txt, okMsg){
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){}
+    ta.remove();
+    if(ok){ toast(okMsg); return; }
+    // 最后兜底：直接摊开文本框，让用户手动全选复制
+    var box = document.getElementById('outText');
+    box.value = txt;
+    document.getElementById('outbox').classList.add('show');
+    box.focus(); box.select();
+    toast('复制被浏览器拦了，已摊在下面，请手动全选复制');
+  }
+
+  function copyText(txt, okMsg){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast(okMsg); },
+                                             function(){ fallbackCopy(txt, okMsg); });
+    } else fallbackCopy(txt, okMsg);
+  }
+
+  document.getElementById('openOut').onclick = function(){
+    document.getElementById('outText').value = JSON.stringify(result(), null, 2);
+    document.getElementById('outbox').classList.add('show');
+  };
+  document.getElementById('closeOut').onclick = function(){
+    document.getElementById('outbox').classList.remove('show');
+  };
+  document.getElementById('cpBrief').onclick = function(){
+    copyText(brief(), '已复制，直接粘给 WorkBuddy');
+  };
+  document.getElementById('cpAll').onclick = function(){
+    copyText(document.getElementById('outText').value, '已复制，直接粘给 WorkBuddy');
+  };
+  document.getElementById('dl2').onclick = function(){
+    try{
+      var blob = new Blob([JSON.stringify(result(), null, 2)], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tencent_biz_selected.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      toast('已下载 tencent_biz_selected.json');
+    }catch(e){
+      document.getElementById('outText').value = JSON.stringify(result(), null, 2);
+      document.getElementById('outbox').classList.add('show');
+      toast('下载被拦，请用上面的文本框复制');
+    }
+  };
+
+  render();
+  if(restored) toast('已恢复你上次未导出的勾选');
+})();
+</script>
+</body>
+</html>
